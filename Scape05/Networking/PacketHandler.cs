@@ -102,4 +102,12 @@ public class PacketHandler
     {
         _client.FillStream(i);
     }
+
+    public void Build()
+    {
+        if (_queuedPackets.TryDequeue(out var packet))
+        {
+            Console.WriteLine($"Dequeued: {packet.OpCode} {nameof(packet)}");
+        }
+    }
 }

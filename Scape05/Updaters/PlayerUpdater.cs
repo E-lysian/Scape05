@@ -65,6 +65,7 @@ public class PlayerUpdater
 
             if (!_player.LocalPlayers.Contains(other) && other.Location.IsWithinArea(_player.Location))
             {
+                _player.LocalPlayers.AddLast(other);
                 AddPlayer(_player.Writer, _player, other);
                 UpdateState(other, UpdateTempBlock, true, false);
             }
@@ -95,7 +96,6 @@ public class PlayerUpdater
 
     private void UpdateLocalPlayerMovement()
     {
-        //_player.DirectFlushStream();
         var updateRequired = _player.IsUpdateRequired;
         if (_player.NeedsPlacement)
         {
@@ -163,7 +163,14 @@ public class PlayerUpdater
     private void UpdateState(Player player, RSStream updatetempBlock, bool forceAppearance, bool noChat)
     {
         PlayerUpdateFlags mask = player.Flags;
-
+        if (!mask.HasFlag(PlayerUpdateFlags.Appearance))
+        {
+            if (forceAppearance)
+            {
+                mask |= PlayerUpdateFlags.Appearance;
+            }
+        }
+        
         if (mask >= PlayerUpdateFlags.FullMask)
         {
             mask |= PlayerUpdateFlags.FullMask;
@@ -177,7 +184,7 @@ public class PlayerUpdater
         //if ((mask & PlayerUpdateFlags.Graphics) != 0) AppendGraphics(player, updatetempBlock);
         //if ((mask & PlayerUpdateFlags.Animation) != 0) AppendAnimation(player, updatetempBlock, player.AnimationId);
         //if ((mask & PlayerUpdateFlags.InteractingEntity) != 0) AppendNPCInteract(player, updatetempBlock);
-        if ((mask & PlayerUpdateFlags.Appearance) != 0) AppendAppearance(player, updatetempBlock);
+        if ((mask & PlayerUpdateFlags.Appearance) != 0 || forceAppearance) AppendAppearance(player, updatetempBlock);
         //if ((mask & PlayerUpdateFlags.FaceDirection) != 0) AppendFaceDirection(player, updatetempBlock);
         //if ((mask & PlayerUpdateFlags.SingleHit) != 0) AppendSingleHit(player, updatetempBlock);
     }
@@ -285,7 +292,6 @@ public class PlayerUpdater
 
     private static void AddPlayer(RSStream writer, Player player, Player other)
     {
-        Console.WriteLine($"Add Slot: {other.Index}");
         writer.WriteBits(11, other.Index);
         writer.WriteBits(1, 1);
         writer.WriteBits(1, 1);

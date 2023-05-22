@@ -24,6 +24,13 @@ public class Server
 
             for (var j = 0; j < 10; j++)
                 player.PacketHandler.Fetch();
+
+            for (int i = 0; i < 10; i++)
+            {
+                player.PacketHandler.Build();
+            }
+            
+            player.MovementHandler.Process();
         }
     }
 
@@ -34,8 +41,7 @@ public class Server
         {
             if (player == null)
                 continue;
-
-            player.MovementHandler.Process();
+            
             player.PlayerUpdater.UpdateLocalPlayer();
         }
     }
