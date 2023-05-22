@@ -7,13 +7,13 @@ namespace Scape05.Entities;
 
 public class PacketHandler
 {
-    private readonly Client _client;
+    private readonly Player _client;
     private readonly int _maxQueuedPackets = 10;
     private List<IPacket> _packets;
     private readonly Queue<IPacket> _queuedPackets;
     private int _opCode = -1;
 
-    public PacketHandler(Client client)
+    public PacketHandler(Player client)
     {
         _client = client;
         InstantiatePackets();
@@ -58,7 +58,7 @@ public class PacketHandler
             }
 
             FillStream(PacketLength);
-            Console.WriteLine($"OpCode: {_opCode} - Length: {PacketLength}");
+            Console.WriteLine($"+ [{DateTime.Now}] [{_opCode}] Packet Received - Length: {PacketLength}");
         }
 
         if (_opCode != -1 && _queuedPackets.Count < _maxQueuedPackets)

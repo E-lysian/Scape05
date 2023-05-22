@@ -21,6 +21,8 @@ public class MovementHandler
     {
         Point walkPoint = null;
         Point runPoint = null;
+        if (waypoints.Count <= 0)
+            return;
 
         walkPoint = waypoints.First.Value;
         waypoints.RemoveFirst();
