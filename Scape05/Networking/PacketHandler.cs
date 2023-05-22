@@ -2,6 +2,7 @@
 using Scape05.Entities.Packets.Implementation;
 using Scape05.IO;
 using Scape05.Misc;
+using Scape05.Networking.Packets.Incoming;
 
 namespace Scape05.Entities;
 
@@ -26,7 +27,8 @@ public class PacketHandler
     {
         _packets = new List<IPacket>
         {
-            new RegularWalkPacket()
+            new RegularWalkPacket(),
+            new PlayerCommandPacket()
         };
     }
 

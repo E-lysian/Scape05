@@ -13,10 +13,11 @@ public class Player : Client, IEntity
     public BuildArea BuildArea { get; set; }
 
     /* Extract these? */
-    public int CombatLevel { get; set; }
+    public int CombatLevel { get; set; } = 3;
     public int TotalLevel { get; set; }
     public bool IsUpdateRequired { get; set; }
     public bool NeedsPlacement { get; set; }
+    public int Size { get; set; } = 1;
     public int HeadIcon { get; set; }
 
     public EquipmentManager EquipmentManager { get; set; } = new();
@@ -48,9 +49,9 @@ public class Player : Client, IEntity
         PacketBuilder.SendMapRegion(this);
         PacketBuilder.SendMessage($"{ServerConfig.WELCOME_MSG}", this);
         PacketBuilder.SendPlayerStatus(this);
-        
+
         PacketBuilder.SendSkills(this);
-        
+
         PacketBuilder.SendSidebarInterface(this, 0, 2423);
         PacketBuilder.SendSidebarInterface(this, 1, 3917);
         PacketBuilder.SendSidebarInterface(this, 2, 638);
@@ -64,9 +65,9 @@ public class Player : Client, IEntity
         PacketBuilder.SendSidebarInterface(this, 11, 4445);
         PacketBuilder.SendSidebarInterface(this, 12, 147);
         PacketBuilder.SendSidebarInterface(this, 13, 6299);
-        
+
         PacketBuilder.SendEquipment(this);
-        
+
         Flags |= PlayerUpdateFlags.Appearance;
         NeedsPlacement = true;
         IsUpdateRequired = true;

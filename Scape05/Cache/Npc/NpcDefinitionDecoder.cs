@@ -5,7 +5,7 @@ namespace Scape05.Data.Npc;
 public class NpcDefinitionDecoder
 {
     private readonly IndexedFileSystem fs;
-    public static NpcDefinition[] NpcDefinitions { get; set; }
+    public static Dictionary<int, NpcDefinition> NpcDefinitions { get; set; } = new();
 
     public NpcDefinitionDecoder(IndexedFileSystem fs)
     {
@@ -34,14 +34,12 @@ public class NpcDefinitionDecoder
                     index += idxReader.ReadInt16BigEndian();
                 }
 
-                var npcDefinitions = new NpcDefinition[count];
                 for (var i = 0; i < count; i++)
                 {
                     dataReader.BaseStream.Position = indices[i];
-                    npcDefinitions[i] = Decode(i, dataReader);
+                    var npcDef = Decode(i, dataReader);
+                    NpcDefinitions.Add(npcDef.Id, npcDef);
                 }
-
-                NpcDefinitions = npcDefinitions;
             }
         }
         catch (IOException e)
@@ -50,6 +48,11 @@ public class NpcDefinitionDecoder
         }
     }
 
+    public static NpcDefinition GetByModelId(int modelId)
+    {
+        return null;
+    }
+    
     private NpcDefinition Decode(int id, BinaryReader buffer)
     {
         var definition = new NpcDefinition();
