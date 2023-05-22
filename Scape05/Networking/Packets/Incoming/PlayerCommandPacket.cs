@@ -36,7 +36,7 @@ public class PlayerCommandPacket : IPacket
             var npc = new NPC
             {
                 ModelId = npcModelId,
-                Location = _player.Location,
+                Location = new Location(_player.Location.X, _player.Location.Y),
                 Size = npcDef.Size,
                 Name = npcDef.Name,
                 CombatLevel = npcDef.CombatLevel

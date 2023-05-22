@@ -1,5 +1,6 @@
 ﻿using Scape05.Entities.Packets;
 using Scape05.Misc;
+using Scape05.Updaters;
 
 namespace Scape05.Entities;
 
@@ -12,6 +13,7 @@ public class Server
     {
         FetchPackets();
         UpdatePlayers();
+        UpdateNPCs();
         FlushClients();
         ResetPlayers();
     }
@@ -46,6 +48,11 @@ public class Server
             player.PlayerUpdater.UpdateLocalPlayer();
         }
     }
+    
+    private void UpdateNPCs()
+    {
+        NPCUpdater.Update();
+    }
 
     /* Send packets that we've accumulated */
     private void FlushClients()
@@ -77,6 +84,7 @@ public class Server
         {
             if (NPCs[i] != null) continue;
 
+            npc.Index = i;
             NPCs[i] = npc;
             break;
         }
