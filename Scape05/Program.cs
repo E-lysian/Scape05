@@ -1,20 +1,28 @@
-﻿using System.Diagnostics;
+﻿using CacheReader.World;
 using Scape05.Data;
 using Scape05.Data.Items;
 using Scape05.Data.Npc;
 using Scape05.Data.ObjectsDef;
 using Scape05.Engine;
+using Scape05.Misc;
 
-var sw = new Stopwatch();
+void ParseCache(IndexedFileSystem ifs)
+{
+    new ObjectDefinitionDecoder(ifs).Run();
+    new ItemDefinitionDecoder(ifs).Run();
+    new NpcDefinitionDecoder(ifs).Run();
+}
 
-Console.WriteLine("Started parsing the cache..");
-sw.Start();
+void LoadRegionFactory(IndexedFileSystem ifs)
+{
+    RegionFactory.Load(ifs);
+    ServerConfig.Startup = false;
+}
+
 var ifs = new IndexedFileSystem("./cache", true);
-new ObjectDefinitionDecoder(ifs).Run();
-new ItemDefinitionDecoder(ifs).Run();
-new NpcDefinitionDecoder(ifs).Run();
-Console.WriteLine($"Finished parsing the cache in {sw.Elapsed.Milliseconds}ms");
-sw.Stop();
+
+Benchmarker.MeasureTime(() => ParseCache(ifs), "Parsing cache");
+Benchmarker.MeasureTime(() => LoadRegionFactory(ifs), "Loading regions");
 
 GameEngine engine = new GameEngine();
 engine.Start();
