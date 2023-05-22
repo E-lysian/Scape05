@@ -35,7 +35,7 @@ public class Player : Client, IEntity
         PacketHandler = new PacketHandler(this);
         // PacketReceiver = new PacketReceiver(this);
 
-        Location = new Location(3200, 3200);
+        Location = new Location(3214, 3424);
         BuildArea = new BuildArea(this);
 
         InitializePlayerColors();
