@@ -43,6 +43,4 @@ public static  class MovementHelper
 
         throw new ArgumentException($"Cannot find direction {deltaX} {deltaY}");
     }
-
-
 }
