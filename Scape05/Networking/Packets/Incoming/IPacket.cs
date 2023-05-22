@@ -3,5 +3,5 @@
 public interface IPacket
 {
     public int OpCode { get; set; }
-    void Build(Player client);
+    void Build(Player player);
 }

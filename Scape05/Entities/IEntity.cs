@@ -8,4 +8,6 @@ public interface IEntity
     public int HeadIcon { get; set; }
     public bool IsUpdateRequired { get; set; }
     public bool NeedsPlacement { get; set; }
+    public int Size { get; set; }
+    public int CombatLevel { get; set; }
 }

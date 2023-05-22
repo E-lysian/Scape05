@@ -135,8 +135,6 @@ public class MovementHandler
         {
             waypoints.AddLast(new Point(x, y, direction));
         }
-
-        Console.WriteLine($"Direction: {direction}");
     }
 
     public void Reset()

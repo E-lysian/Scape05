@@ -1,4 +1,5 @@
-﻿using Scape05.Misc;
+﻿using Scape05.Entities.Packets;
+using Scape05.Misc;
 
 namespace Scape05.Entities;
 
@@ -29,7 +30,7 @@ public class Server
             {
                 player.PacketHandler.Build();
             }
-            
+
             player.MovementHandler.Process();
         }
     }
@@ -41,7 +42,7 @@ public class Server
         {
             if (player == null)
                 continue;
-            
+
             player.PlayerUpdater.UpdateLocalPlayer();
         }
     }
@@ -68,5 +69,18 @@ public class Server
 
             player.Reset();
         }
+    }
+
+    public static void AddNPC(NPC npc)
+    {
+        for (int i = 0; i < NPCs.Length; i++)
+        {
+            if (NPCs[i] != null) continue;
+
+            NPCs[i] = npc;
+            break;
+        }
+
+        Console.WriteLine("Can't add anymore NPCs");
     }
 }
