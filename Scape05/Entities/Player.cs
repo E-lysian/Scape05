@@ -108,5 +108,9 @@ public class Player : Client, IEntity
     public void Reset()
     {
         NeedsPlacement = false;
+        IsUpdateRequired = false;
+        Flags = PlayerUpdateFlags.None;
+        MovementHandler.PrimaryDirection = -1;
+        MovementHandler.SecondaryDirection = -1;
     }
 }

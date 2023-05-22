@@ -35,6 +35,7 @@ public class Server
             if (player == null)
                 continue;
 
+            player.MovementHandler.Process();
             player.PlayerUpdater.UpdateLocalPlayer();
         }
     }

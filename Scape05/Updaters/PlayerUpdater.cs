@@ -22,7 +22,8 @@ public class PlayerUpdater
         _player.Writer.InitBitAccess();
 
         UpdateLocalPlayerMovement();
-        UpdateState(_player, UpdateTempBlock, false, false);
+        if (_player.IsUpdateRequired)
+            UpdateState(_player, UpdateTempBlock, false, false);
         UpdateRemotePlayers();
         UpdateNewPlayers();
 
@@ -94,6 +95,7 @@ public class PlayerUpdater
 
     private void UpdateLocalPlayerMovement()
     {
+        //_player.DirectFlushStream();
         var updateRequired = _player.IsUpdateRequired;
         if (_player.NeedsPlacement)
         {
