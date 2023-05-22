@@ -14,4 +14,10 @@ public class NPC : IEntity
     public NPCUpdateFlags Flags { get; set; }
     public int Size { get; set; } = -1;
     public int CombatLevel { get; set; } = 1;
+    public NPCMovementHandler MovementHandler { get; set; }
+
+    public NPC()
+    {
+        MovementHandler = new NPCMovementHandler(this);
+    }
 }

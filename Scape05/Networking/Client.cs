@@ -11,6 +11,7 @@ public class Client
     public TcpClient Socket { get; set; }
     public NetworkStream NetworkStream { get; set; }
     public LinkedList<Player> LocalPlayers { get; set; } = new();
+    public LinkedList<NPC> LocalNpcs { get; set; } = new();
     public SessionEncryption InEncryption { get; set; }
     public SessionEncryption OutEncryption { get; set; }
 
