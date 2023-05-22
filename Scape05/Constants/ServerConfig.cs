@@ -9,4 +9,5 @@ public class ServerConfig
     public const string SERVER_NAME = "Scape05";
     public const string WELCOME_MSG = "Welcome to Scape2005";
     public const int MAX_NPCS = 60000;
+    public static bool Startup { get; set; } = true;
 }

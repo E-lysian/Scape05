@@ -42,7 +42,7 @@ public class GameEngine
         _listener.Start(10);
         _isRunning = true;
 
-        Console.WriteLine("Server has started..");
+        Console.WriteLine( $"[{DateTime.Now}] Server has started!");
     }
 
     private void Tick()
