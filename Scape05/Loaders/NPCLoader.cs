@@ -54,26 +54,21 @@ public class NPCLoader
             case 2:
                 npc.Face = new Face(npc.Location.X, npc.Location.Y + 1);
                 npc.Flags |= NPCUpdateFlags.Face;
-                npc.IsUpdateRequired = true;
                 break;
             case 3:
                 npc.Face = new Face(npc.Location.X, npc.Location.Y - 1);
                 npc.Flags |= NPCUpdateFlags.Face;
-                npc.IsUpdateRequired = true;
                 break;
             case 4:
                 npc.Face = new Face(npc.Location.X + 1, npc.Location.Y);
                 npc.Flags |= NPCUpdateFlags.Face;
-                npc.IsUpdateRequired = true;
                 break;
             case 5:
                 npc.Face = new Face(npc.Location.X - 1, npc.Location.Y);
                 npc.Flags |= NPCUpdateFlags.Face;
-                npc.IsUpdateRequired = true;
                 break;
             default:
                 npc.Face = new Face(npc.Location.X, npc.Location.Y);
-                npc.Flags |= NPCUpdateFlags.Face;
                 break;
         }
     }

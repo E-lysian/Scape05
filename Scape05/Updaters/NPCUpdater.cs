@@ -64,11 +64,11 @@ public class NPCUpdater
                 if (npc.Location.IsWithinArea(player.Location))
                 {
                     client.LocalNpcs.AddLast(npc);
+                    npc.Flags |= NPCUpdateFlags.Face;
+                    npc.IsUpdateRequired = true;
+
                     AddNPC(client, npc, client.Writer);
-                    if (npc.IsUpdateRequired)
-                    {
-                        AppendUpdates(npc, updateBlock);
-                    }
+                    AppendUpdates(npc, updateBlock);
                 }
                 else
                 {
@@ -95,6 +95,8 @@ public class NPCUpdater
         {
             if (npc == null) continue;
 
+            npc.Flags = NPCUpdateFlags.None;
+            npc.IsUpdateRequired = false;
             //npc.AnimationUpdateRequired = false;
             //npc.GraphicsUpdateRequired = false;
             //npc.SingleHitUpdateRequired = false;
@@ -112,57 +114,15 @@ public class NPCUpdater
     {
         var mask = NPCUpdateFlags.None;
 
-        // if (npc.AnimationId != -1)
-        //     mask |= NPCUpdateFlags.Animation;
-        //
-        // if (npc.SingleHitUpdateRequired)
-        //     mask |= NPCUpdateFlags.SingleHit;
-        //
-        // if (npc.CurrentInteractingEntityId != -1)
-        //     mask |= NPCUpdateFlags.InteractingEntity;
-        //
-        // if (npc.ForceChatUpdateRequired)
-        //     mask |= NPCUpdateFlags.ForceChat;
-        //
-        if ((npc.Flags & NPCUpdateFlags.Face) != 0)
+        if (npc.Flags.HasFlag(NPCUpdateFlags.Face))
         {
             mask |= NPCUpdateFlags.Face;
         }
 
         updateBlock.WriteByte((byte)mask);
 
-        // if (npc.AnimationId != -1)
-        // {
-        //     updateBlock.WriteWordBigEndian(npc.AnimationId);
-        //     updateBlock.WriteByte(0);
-        // }
-
-        // if (npc.SingleHitUpdateRequired)
-        // {
-        //     updateBlock.WriteByteA((byte)npc.CombatMethod.LastHit.Damage);
-        //     updateBlock.WriteByteC((byte)npc.CombatMethod.LastHit.Type);
-        //     updateBlock.WriteByteA(npc.Health);
-        //     updateBlock.WriteByte(npc.MaxHealth);
-        // }
-
-        //if (npc.CurrentInteractingEntityId != -1)
-        //{
-        //    var id = npc.CurrentInteractingEntityId + 32768;
-        //    if (npc.CurrentInteractingEntityId == 0x00FFFF)
-        //        id = 0x00FFFF;
-
-        //    updateBlock.WriteWord(id);
-        //}
-
-        // if (npc.ForceChatUpdateRequired)
-        //     updateBlock.WriteString(npc.ForceChatText);
-
         if ((mask & NPCUpdateFlags.Face) != 0)
         {
-            //if (npc.ModelId == 925 && npc.Position.AbsoluteX == 3267 && npc.Position.AbsoluteY == 3226)
-            //{
-            //}
-
             updateBlock.WriteWordBigEndian(npc.Face == null ? 0 : npc.Face.X);
             updateBlock.WriteWordBigEndian(npc.Face == null ? 0 : npc.Face.Y);
         }

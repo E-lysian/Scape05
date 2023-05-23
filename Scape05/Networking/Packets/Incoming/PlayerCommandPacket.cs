@@ -1,6 +1,7 @@
 ﻿using Scape05.Data.Npc;
 using Scape05.Entities;
 using Scape05.Entities.Packets;
+using Scape05.Misc;
 
 namespace Scape05.Networking.Packets.Incoming;
 
@@ -39,8 +40,11 @@ public class PlayerCommandPacket : IPacket
                 Location = new Location(_player.Location.X, _player.Location.Y),
                 Size = npcDef.Size,
                 Name = npcDef.Name,
-                CombatLevel = npcDef.CombatLevel
+                CombatLevel = npcDef.CombatLevel,
+                Face =  new Face(_player.Location.X - 1, _player.Location.Y)
             };
+            npc.Flags |= NPCUpdateFlags.Face;
+            npc.IsUpdateRequired = true;
             Server.AddNPC(npc);
         }
         else
