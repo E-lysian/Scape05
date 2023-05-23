@@ -16,6 +16,11 @@ public class Server
         UpdateNPCs();
         FlushClients();
         ResetPlayers();
+        foreach (var npc in Server.NPCs)
+        {
+            if (npc == null) continue;
+            npc.Reset();
+        }
     }
 
     private void FetchPackets()
@@ -86,7 +91,7 @@ public class Server
 
             npc.Index = i;
             NPCs[i] = npc;
-            break;
+            return;
         }
 
         Console.WriteLine("Can't add anymore NPCs");
