@@ -14,14 +14,13 @@ public class Server
         FetchPackets();
         UpdatePlayers();
         UpdateNPCs();
+        UpdateCombat();
         FlushClients();
         ResetPlayers();
-        foreach (var npc in Server.NPCs)
-        {
-            if (npc == null) continue;
-            npc.Reset();
-        }
+        
     }
+
+
 
     private void FetchPackets()
     {
@@ -59,6 +58,36 @@ public class Server
         NPCUpdater.Update();
     }
 
+    private void UpdateCombat()
+    {
+        foreach (var player in Players)
+        {
+            if (player == null) continue;
+            player.CombatManager.Attack();
+        }
+        
+        foreach (var npc in NPCs)
+        {
+            if (npc == null) continue;
+            npc.CombatManager.Attack();
+        }
+        
+        
+        foreach (var player in Players)
+        {
+            if (player == null) continue;
+            player.CombatManager.CheckWonBattle();
+            player.CombatManager.CheckLostBattle();
+        }
+        
+        foreach (var npc in NPCs)
+        {
+            if (npc == null) continue;
+            npc.CombatManager.CheckWonBattle();
+            npc.CombatManager.CheckLostBattle();
+        }
+    }
+    
     /* Send packets that we've accumulated */
     private void FlushClients()
     {

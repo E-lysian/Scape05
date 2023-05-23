@@ -1,4 +1,5 @@
-﻿using Scape05.Entities.Packets;
+﻿using Scape05.Engine.Combat;
+using Scape05.Entities.Packets;
 using Scape05.Managers;
 using Scape05.Misc;
 using Scape05.Updaters;
@@ -14,6 +15,8 @@ public class Player : Client, IEntity
 
     /* Extract these? */
     public int CombatLevel { get; set; } = 3;
+    public int Health { get; set; } = 10;
+    public ICombatManager CombatManager { get; set; }
     public int TotalLevel { get; set; }
     public bool IsUpdateRequired { get; set; }
     public bool NeedsPlacement { get; set; }
@@ -34,7 +37,8 @@ public class Player : Client, IEntity
         PlayerUpdater = new PlayerUpdater(this);
         MovementHandler = new MovementHandler(this);
         PacketHandler = new PacketHandler(this);
-        // PacketReceiver = new PacketReceiver(this);
+        CombatManager = new MeleeCombatHandler(this);
+        CombatManager.Weapon = new(4151, 1, 4, new CombatAnimations(1658, 1659, 1111), WeaponType.SWORD);
 
         Location = new Location(3183, 3440);
         BuildArea = new BuildArea(this);

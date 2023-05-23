@@ -1,4 +1,6 @@
-﻿namespace Scape05.Entities;
+﻿using Scape05.Engine.Combat;
+
+namespace Scape05.Entities;
 
 public interface IEntity
 {
@@ -10,4 +12,6 @@ public interface IEntity
     public bool NeedsPlacement { get; set; }
     public int Size { get; set; }
     public int CombatLevel { get; set; }
+    public int Health { get; set; }
+    ICombatManager CombatManager { get; set; }
 }

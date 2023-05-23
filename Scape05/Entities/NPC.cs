@@ -1,4 +1,5 @@
-﻿using Scape05.Misc;
+﻿using Scape05.Engine.Combat;
+using Scape05.Misc;
 
 namespace Scape05.Entities;
 
@@ -14,6 +15,8 @@ public class NPC : IEntity
     public NPCUpdateFlags Flags { get; set; }
     public int Size { get; set; } = -1;
     public int CombatLevel { get; set; } = 1;
+    public int Health { get; set; } = 10;
+    public ICombatManager CombatManager { get; set; }
     public NPCMovementHandler MovementHandler { get; set; }
     public bool CanWalk { get; set; }
     public Face Face { get; set; }
@@ -21,25 +24,7 @@ public class NPC : IEntity
     public NPC()
     {
         MovementHandler = new NPCMovementHandler(this);
-    }
-
-    public void Reset()
-    {
-        //Flags = NPCUpdateFlags.None;
-        //IsUpdateRequired = false;
-        // MovementHandler.PrimaryDirection = -1;
-        // MovementHandler.SecondaryDirection = -1;
-    }
-}
-
-public class Face
-{
-    public int X { get; set; }
-    public int Y { get; set; }
-
-    public Face(int x, int y)
-    {
-        X = x * 2 + 1;
-        Y = y * 2 + 1;
+        CombatManager = new MeleeCombatHandler(this);
+        CombatManager.Weapon = new(4151, 1, 4, new CombatAnimations(1658, 1659, 1111), WeaponType.SWORD);
     }
 }
