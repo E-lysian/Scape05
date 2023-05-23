@@ -64,9 +64,11 @@ public class NPCUpdater
                 if (npc.Location.IsWithinArea(player.Location))
                 {
                     client.LocalNpcs.AddLast(npc);
-                    //npc.IsUpdateRequired = true;
                     AddNPC(client, npc, client.Writer);
-                    AppendUpdates(npc, updateBlock);
+                    if (npc.IsUpdateRequired)
+                    {
+                        AppendUpdates(npc, updateBlock);
+                    }
                 }
                 else
                 {
@@ -122,10 +124,12 @@ public class NPCUpdater
         // if (npc.ForceChatUpdateRequired)
         //     mask |= NPCUpdateFlags.ForceChat;
         //
-        // if (npc.FaceUpdateRequired)
-        //     mask |= NPCUpdateFlags.Face;
+        if ((npc.Flags & NPCUpdateFlags.Face) != 0)
+        {
+            mask |= NPCUpdateFlags.Face;
+        }
 
-        //updateBlock.WriteByte((byte)mask);
+        updateBlock.WriteByte((byte)mask);
 
         // if (npc.AnimationId != -1)
         // {
@@ -153,17 +157,15 @@ public class NPCUpdater
         // if (npc.ForceChatUpdateRequired)
         //     updateBlock.WriteString(npc.ForceChatText);
 
-        //if (npc.FaceUpdateRequired)
-        //{
-        //    var position = npc.Face;
-        //    if (npc.ModelId == 925 && npc.Position.AbsoluteX == 3267 && npc.Position.AbsoluteY == 3226)
-        //    {
-        //    }
+        if ((mask & NPCUpdateFlags.Face) != 0)
+        {
+            //if (npc.ModelId == 925 && npc.Position.AbsoluteX == 3267 && npc.Position.AbsoluteY == 3226)
+            //{
+            //}
 
-        //    updateBlock.WriteWordBigEndian(npc.Face == null ? 0 : npc.Face.AbsoluteX * 2 + 1);
-        //    updateBlock.WriteWordBigEndian(npc.Face == null ? 0 : npc.Face.AbsoluteY * 2 + 1);
-        //    npc.IsUpdateRequired = false;
-        //}
+            updateBlock.WriteWordBigEndian(npc.Face == null ? 0 : npc.Face.X);
+            updateBlock.WriteWordBigEndian(npc.Face == null ? 0 : npc.Face.Y);
+        }
     }
 
 
