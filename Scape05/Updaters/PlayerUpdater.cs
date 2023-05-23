@@ -22,6 +22,8 @@ public class PlayerUpdater
         _player.Writer.InitBitAccess();
 
         UpdateLocalPlayerMovement();
+        // _player.CombatManager.Attack();
+
         if (_player.IsUpdateRequired)
             UpdateState(_player, UpdateTempBlock, false, false);
         UpdateRemotePlayers();
@@ -163,6 +165,13 @@ public class PlayerUpdater
     private void UpdateState(Player player, RSStream updatetempBlock, bool forceAppearance, bool noChat)
     {
         PlayerUpdateFlags mask = player.Flags;
+
+        
+        if (mask.HasFlag(PlayerUpdateFlags.Animation))
+        {
+            mask |= PlayerUpdateFlags.Animation;
+        }
+        
         if (!mask.HasFlag(PlayerUpdateFlags.Appearance))
         {
             if (forceAppearance)
@@ -170,7 +179,12 @@ public class PlayerUpdater
                 mask |= PlayerUpdateFlags.Appearance;
             }
         }
-        
+
+        if (mask.HasFlag(PlayerUpdateFlags.SingleHit))
+        {
+            mask |= PlayerUpdateFlags.SingleHit;
+        }
+
         if (mask >= PlayerUpdateFlags.FullMask)
         {
             mask |= PlayerUpdateFlags.FullMask;
@@ -182,11 +196,25 @@ public class PlayerUpdater
         }
 
         //if ((mask & PlayerUpdateFlags.Graphics) != 0) AppendGraphics(player, updatetempBlock);
-        //if ((mask & PlayerUpdateFlags.Animation) != 0) AppendAnimation(player, updatetempBlock, player.AnimationId);
+        if ((mask & PlayerUpdateFlags.Animation) != 0) AppendAnimation(player, updatetempBlock, player.AnimationId);
         //if ((mask & PlayerUpdateFlags.InteractingEntity) != 0) AppendNPCInteract(player, updatetempBlock);
         if ((mask & PlayerUpdateFlags.Appearance) != 0 || forceAppearance) AppendAppearance(player, updatetempBlock);
         //if ((mask & PlayerUpdateFlags.FaceDirection) != 0) AppendFaceDirection(player, updatetempBlock);
-        //if ((mask & PlayerUpdateFlags.SingleHit) != 0) AppendSingleHit(player, updatetempBlock);
+        if ((mask & PlayerUpdateFlags.SingleHit) != 0) AppendSingleHit(player, updatetempBlock);
+    }
+
+    private void AppendAnimation(Player player, RSStream updatetempBlock, int playerAnimationId)
+    {
+        updatetempBlock.WriteWordBigEndian(player.AnimationId); //866 //1365 wc
+        updatetempBlock.WriteByte(0); //delay
+    }
+
+    private void AppendSingleHit(Player player, RSStream updatetempBlock)
+    {
+        updatetempBlock.WriteByte((byte)player.CombatManager.DamageTaken); //hitDamage
+        updatetempBlock.WriteByteA((byte)1); //hitType
+        updatetempBlock.WriteByteC(player.Health); //currentHealth
+        updatetempBlock.WriteByte(player.MaxHealth); //maxHealth
     }
 
     private void AppendAppearance(Player client, RSStream tempB)

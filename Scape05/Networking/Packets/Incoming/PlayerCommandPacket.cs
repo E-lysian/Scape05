@@ -21,6 +21,12 @@ public class PlayerCommandPacket : IPacket
             case "npc":
                 NPCCommand();
                 break;
+            case "damage":
+                PacketBuilder.TakeDamage(player);
+                break;
+            default:
+                PacketBuilder.SendMessage($"Unknown command: '{_commandArgs[0]}'", player);
+                break;
         }
     }
 

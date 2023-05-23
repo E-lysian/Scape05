@@ -12,6 +12,10 @@ public class MeleeCombatHandler : ICombatManager
     public IEntity Target { get; set; }
     public bool IsInitiator { get; set; }
     private int Tick { get; set; }
+    public int DamageTaken { get; set; } = -1;
+    public CombatHit PerformedDamage { get; set; } = null;
+    public int CombatAnimation { get; set; }
+    
 
     public MeleeCombatHandler(IEntity attacker)
     {
@@ -44,11 +48,44 @@ public class MeleeCombatHandler : ICombatManager
             if (Tick % Weapon.Speed == 0)
             {
                 Console.WriteLine($"{_attacker.Name} Attacking!");
-
-                var damage = CalculateDamage();
-                Target.CombatManager.TakeDamage(damage.Damage);
+                PerformedDamage = CalculateDamage();
+                Target.CombatManager.TakeDamage(PerformedDamage.Damage);
                 Target.CombatManager.Alert(_attacker);
                 Tick = 0;
+                
+                switch (_attacker)
+                {
+                    case Player playerEntity:
+                        playerEntity.Flags |= PlayerUpdateFlags.Animation;
+                        playerEntity.AnimationId = Weapon.Animation.AttackId;
+                        playerEntity.IsUpdateRequired = true;
+                        break;
+                    case NPC npcEntity:
+                        npcEntity.Flags |= NPCUpdateFlags.Animation;
+                        npcEntity.AnimationId = Weapon.Animation.AttackId;
+                        npcEntity.IsUpdateRequired = true;
+                        break;
+                    default:
+                        Console.WriteLine("Unknown entity type");
+                        break;
+                }
+                
+                switch (Target)
+                {
+                    case Player playerEntity:
+                        playerEntity.Flags |= PlayerUpdateFlags.Animation;
+                        playerEntity.AnimationId = Weapon.Animation.BlockId;
+                        playerEntity.IsUpdateRequired = true;
+                        break;
+                    case NPC npcEntity:
+                        npcEntity.Flags |= NPCUpdateFlags.Animation;
+                        npcEntity.AnimationId = Weapon.Animation.BlockId;
+                        npcEntity.IsUpdateRequired = true;
+                        break;
+                    default:
+                        Console.WriteLine("Unknown entity type");
+                        break;
+                }
             }
         }
     }
@@ -63,8 +100,44 @@ public class MeleeCombatHandler : ICombatManager
 
     public void TakeDamage(int damage)
     {
+        /* Set block flag */
+        DamageTaken = damage;
         _attacker.Health -= damage;
         ConsoleColorHelper.Broadcast(0, $"[{_attacker.Health}] {_attacker.Name} Took {damage} Damage!");
+        
+        switch (_attacker)
+        {
+            case Player playerEntity:
+                playerEntity.Flags |= PlayerUpdateFlags.Animation;
+                playerEntity.AnimationId = Weapon.Animation.AttackId;
+                playerEntity.IsUpdateRequired = true;
+                break;
+            case NPC npcEntity:
+                npcEntity.Flags |= NPCUpdateFlags.Animation;
+                npcEntity.AnimationId = Weapon.Animation.AttackId;
+                npcEntity.IsUpdateRequired = true;
+                break;
+            default:
+                Console.WriteLine("Unknown entity type");
+                break;
+        }
+                
+        switch (Target)
+        {
+            case Player playerEntity:
+                playerEntity.Flags |= PlayerUpdateFlags.Animation;
+                playerEntity.AnimationId = Weapon.Animation.BlockId;
+                playerEntity.IsUpdateRequired = true;
+                break;
+            case NPC npcEntity:
+                npcEntity.Flags |= NPCUpdateFlags.Animation;
+                npcEntity.AnimationId = Weapon.Animation.BlockId;
+                npcEntity.IsUpdateRequired = true;
+                break;
+            default:
+                Console.WriteLine("Unknown entity type");
+                break;
+        }
     }
 
     public void CheckWonBattle()
@@ -72,6 +145,7 @@ public class MeleeCombatHandler : ICombatManager
         if (InCombat && Target.Health <= 0)
         {
             ConsoleColorHelper.Broadcast(1, $"{_attacker.Name} Won over {Target.Name}.");
+            _attacker.Health = 10;
             InCombat = false;
             ShouldInitiate = false;
             Target = null;

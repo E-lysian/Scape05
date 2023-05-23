@@ -12,14 +12,19 @@ public class Server
     public void Process()
     {
         FetchPackets();
-        UpdatePlayers();
-        UpdateNPCs();
+        
+        /* Combat Updates */
         UpdateCombat();
+        
+        /* Player Movement & Appearance*/
+        UpdatePlayers();
+        
+        /* NPC Movement & Appearance */
+        UpdateNPCs();
+        
         FlushClients();
         ResetPlayers();
-        
     }
-
 
 
     private void FetchPackets()
@@ -52,7 +57,7 @@ public class Server
             player.PlayerUpdater.UpdateLocalPlayer();
         }
     }
-    
+
     private void UpdateNPCs()
     {
         NPCUpdater.Update();
@@ -60,34 +65,75 @@ public class Server
 
     private void UpdateCombat()
     {
+        /* Calculate damage and add hit splats */
         foreach (var player in Players)
         {
             if (player == null) continue;
             player.CombatManager.Attack();
         }
-        
+
         foreach (var npc in NPCs)
         {
             if (npc == null) continue;
             npc.CombatManager.Attack();
         }
-        
-        
+
+
+        // foreach (var player in Players)
+        // {
+        //     if (player == null) continue;
+        //     if (player.CombatManager.DamageTaken != -1)
+        //     {
+        //         player.Flags |= PlayerUpdateFlags.SingleHit;
+        //         player.IsUpdateRequired = true;
+        //     }
+        // }
+
+        // /* Add Animations */
+        // foreach (var player in Players)
+        // {
+        //     var animationId = player.CombatManager.Weapon.animation.AttackId;
+        //     /* If we hit a 0, and got hit a 0, aka target and attacker hit the same tick */
+        //     if (player.CombatManager.DamageTaken <= 0 && player.CombatManager.PerformedDamage.Damage <= 0)
+        //     {
+        //         /* Set attack animation */
+        //         animationId = player.CombatManager.Weapon.animation.AttackId;
+        //         continue;
+        //     }
+        //
+        //     /* I hit, they missed */
+        //     if (player.CombatManager.DamageTaken <= 0 && player.CombatManager.PerformedDamage.Damage > 0)
+        //     {
+        //         /* Set attack animation */
+        //         animationId = player.CombatManager.Weapon.animation.AttackId;
+        //         continue;
+        //     }
+        //
+        //     if (player.CombatManager.DamageTaken != -1)
+        //     {
+        //         animationId = player.CombatManager.Weapon.animation.BlockId;
+        //     }
+        // }
+
+
+        /* Reset-ish */
         foreach (var player in Players)
         {
             if (player == null) continue;
             player.CombatManager.CheckWonBattle();
             player.CombatManager.CheckLostBattle();
+            player.CombatManager.PerformedDamage = null;
         }
-        
+
         foreach (var npc in NPCs)
         {
             if (npc == null) continue;
             npc.CombatManager.CheckWonBattle();
             npc.CombatManager.CheckLostBattle();
+            npc.CombatManager.PerformedDamage = null;
         }
     }
-    
+
     /* Send packets that we've accumulated */
     private void FlushClients()
     {

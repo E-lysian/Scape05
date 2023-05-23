@@ -1,4 +1,5 @@
-﻿using Scape05.Networking.Packets.ServerPackets;
+﻿using Scape05.Networking.Packets.Outgoing;
+using Scape05.Networking.Packets.ServerPackets;
 
 namespace Scape05.Entities.Packets;
 
@@ -43,6 +44,12 @@ public static class PacketBuilder
     public static void SendEquipment(Player player)
     {
         SendEquipmentPacketCommand packetCommand = SendEquipmentPacketCommand.Create();
+        packetCommand.Execute(player);
+    }
+    
+    public static void TakeDamage(Player player)
+    {
+        TakeDamagePacketCommand packetCommand = TakeDamagePacketCommand.Create();
         packetCommand.Execute(player);
     }
 }

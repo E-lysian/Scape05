@@ -13,5 +13,7 @@ public interface IEntity
     public int Size { get; set; }
     public int CombatLevel { get; set; }
     public int Health { get; set; }
+    public int MaxHealth { get; set; }
     ICombatManager CombatManager { get; set; }
+    public int AnimationId { get; set; }
 }

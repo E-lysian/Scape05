@@ -15,8 +15,10 @@ public class Player : Client, IEntity
 
     /* Extract these? */
     public int CombatLevel { get; set; } = 3;
+    public int MaxHealth { get; set; } = 99;
     public int Health { get; set; } = 10;
     public ICombatManager CombatManager { get; set; }
+    public int AnimationId { get; set; } = -1;
     public int TotalLevel { get; set; }
     public bool IsUpdateRequired { get; set; }
     public bool NeedsPlacement { get; set; }
@@ -81,7 +83,7 @@ public class Player : Client, IEntity
     {
         EquipmentManager.EquipItem(EquipmentSlot.Helmet, 3751);
         EquipmentManager.EquipItem(EquipmentSlot.Amulet, 1704);
-        EquipmentManager.EquipItem(EquipmentSlot.Cape, 1052); //9786
+        EquipmentManager.EquipItem(EquipmentSlot.Cape, 6570); //6570 fcape
         EquipmentManager.EquipItem(EquipmentSlot.Weapon, 4151);
         EquipmentManager.EquipItem(EquipmentSlot.Body, 4736);
         EquipmentManager.EquipItem(EquipmentSlot.Shield, 1187);

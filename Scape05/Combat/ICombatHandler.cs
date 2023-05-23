@@ -16,4 +16,7 @@ public interface ICombatManager
     CombatHit CalculateDamage();
     public bool ShouldInitiate { get; set; }
     void Alert(IEntity target);
+    
+    public int DamageTaken { get; set; }
+    public CombatHit PerformedDamage { get; set; }
 }

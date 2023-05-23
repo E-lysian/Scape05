@@ -42,6 +42,9 @@ public class NPCUpdater
                 if (Server.NPCs[npc.Index] != null && player.Location.IsWithinArea(npc.Location) && !npc.NeedsPlacement)
                 {
                     UpdateMovement(npc, client.Writer);
+                    
+                    // npc.CombatManager.Attack();
+                    
                     if (npc.IsUpdateRequired)
                         AppendUpdates(npc, updateBlock);
                 }
@@ -113,7 +116,17 @@ public class NPCUpdater
     private static void AppendUpdates(NPC npc, RSStream updateBlock)
     {
         var mask = NPCUpdateFlags.None;
+        
+        if (npc.Flags.HasFlag(NPCUpdateFlags.Animation))
+        {
+            mask |= NPCUpdateFlags.Animation;
+        }
 
+        if (npc.Flags.HasFlag(NPCUpdateFlags.SingleHit))
+        {
+            mask |= NPCUpdateFlags.SingleHit;
+        }
+        
         if (npc.Flags.HasFlag(NPCUpdateFlags.Face))
         {
             mask |= NPCUpdateFlags.Face;
@@ -121,6 +134,20 @@ public class NPCUpdater
 
         updateBlock.WriteByte((byte)mask);
 
+        if ((mask & NPCUpdateFlags.Animation) != 0)
+        {
+            updateBlock.WriteWordBigEndian(npc.AnimationId); //866 //1365 wc
+            updateBlock.WriteByte(0); //delay
+        }
+        
+        if ((mask & NPCUpdateFlags.SingleHit) != 0)
+        {
+            updateBlock.WriteByteA((byte)npc.CombatManager.DamageTaken); //hitDamage
+            updateBlock.WriteByteC((byte)1); //hitType
+            updateBlock.WriteByteA(npc.Health); //currentHealth
+            updateBlock.WriteByte(npc.MaxHealth); //maxHealth
+        }
+        
         if ((mask & NPCUpdateFlags.Face) != 0)
         {
             updateBlock.WriteWordBigEndian(npc.Face == null ? 0 : npc.Face.X);
