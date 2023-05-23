@@ -15,8 +15,8 @@ public class NPC : IEntity
     public NPCUpdateFlags Flags { get; set; }
     public int Size { get; set; } = -1;
     public int CombatLevel { get; set; } = 1;
-    public int Health { get; set; } = 10;
-    public int MaxHealth { get; set; } = 10;
+    public int Health { get; set; } = 20;
+    public int MaxHealth { get; set; } = 20;
     public ICombatManager CombatManager { get; set; }
     public int AnimationId { get; set; } = -1;
     public NPCMovementHandler MovementHandler { get; set; }
@@ -27,6 +27,6 @@ public class NPC : IEntity
     {
         MovementHandler = new NPCMovementHandler(this);
         CombatManager = new MeleeCombatHandler(this);
-        CombatManager.Weapon = new(4151, 1, 4, new CombatAnimations(422, 404, 1111), WeaponType.SWORD); //422, 404
+        CombatManager.Weapon = new(4151, 1, 5, new CombatAnimations(422, 404, 1111), WeaponType.SWORD); //422, 404
     }
 }

@@ -16,7 +16,7 @@ public class Player : Client, IEntity
     /* Extract these? */
     public int CombatLevel { get; set; } = 3;
     public int MaxHealth { get; set; } = 99;
-    public int Health { get; set; } = 10;
+    public int Health { get; set; } = 70;
     public ICombatManager CombatManager { get; set; }
     public int AnimationId { get; set; } = -1;
     public int TotalLevel { get; set; }
@@ -119,5 +119,6 @@ public class Player : Client, IEntity
         Flags = PlayerUpdateFlags.None;
         MovementHandler.PrimaryDirection = -1;
         MovementHandler.SecondaryDirection = -1;
+        AnimationId = -1;
     }
 }

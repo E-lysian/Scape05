@@ -19,4 +19,5 @@ public interface ICombatManager
     
     public int DamageTaken { get; set; }
     public CombatHit PerformedDamage { get; set; }
+    bool TookDamage { get; set; }
 }

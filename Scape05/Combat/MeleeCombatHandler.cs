@@ -14,8 +14,9 @@ public class MeleeCombatHandler : ICombatManager
     private int Tick { get; set; }
     public int DamageTaken { get; set; } = -1;
     public CombatHit PerformedDamage { get; set; } = null;
+    public bool TookDamage { get; set; }
     public int CombatAnimation { get; set; }
-    
+
 
     public MeleeCombatHandler(IEntity attacker)
     {
@@ -49,42 +50,77 @@ public class MeleeCombatHandler : ICombatManager
             {
                 Console.WriteLine($"{_attacker.Name} Attacking!");
                 PerformedDamage = CalculateDamage();
-                Target.CombatManager.TakeDamage(PerformedDamage.Damage);
                 Target.CombatManager.Alert(_attacker);
                 Tick = 0;
-                
+
+                _attacker.AnimationId = Weapon.Animation.AttackId;
+
+
                 switch (_attacker)
                 {
                     case Player playerEntity:
                         playerEntity.Flags |= PlayerUpdateFlags.Animation;
-                        playerEntity.AnimationId = Weapon.Animation.AttackId;
+                        if (TookDamage)
+                        {
+                            playerEntity.Flags |= PlayerUpdateFlags.SingleHit;
+                        }
+
                         playerEntity.IsUpdateRequired = true;
                         break;
                     case NPC npcEntity:
                         npcEntity.Flags |= NPCUpdateFlags.Animation;
-                        npcEntity.AnimationId = Weapon.Animation.AttackId;
+                        if (TookDamage)
+                        {
+                            npcEntity.Flags |= NPCUpdateFlags.SingleHit;
+                        }
+
                         npcEntity.IsUpdateRequired = true;
                         break;
                     default:
                         Console.WriteLine("Unknown entity type");
                         break;
                 }
-                
-                switch (Target)
+
+                Target.CombatManager.TakeDamage(PerformedDamage.Damage);
+
+                /* If the target performed damage to us this tick, this resets every tick */
+                if (Target.CombatManager.PerformedDamage != null)
                 {
-                    case Player playerEntity:
-                        playerEntity.Flags |= PlayerUpdateFlags.Animation;
-                        playerEntity.AnimationId = Weapon.Animation.BlockId;
-                        playerEntity.IsUpdateRequired = true;
-                        break;
-                    case NPC npcEntity:
-                        npcEntity.Flags |= NPCUpdateFlags.Animation;
-                        npcEntity.AnimationId = Weapon.Animation.BlockId;
-                        npcEntity.IsUpdateRequired = true;
-                        break;
-                    default:
-                        Console.WriteLine("Unknown entity type");
-                        break;
+                    Target.AnimationId = Target.CombatManager.Weapon.Animation.AttackId;
+                    switch (Target)
+                    {
+                        case Player playerEntity:
+                            playerEntity.Flags |= PlayerUpdateFlags.SingleHit;
+                            playerEntity.IsUpdateRequired = true;
+                            break;
+                        case NPC npcEntity:
+                            npcEntity.Flags |= NPCUpdateFlags.SingleHit;
+                            npcEntity.IsUpdateRequired = true;
+                            break;
+                        default:
+                            Console.WriteLine("Unknown entity type");
+                            break;
+                    }
+                }
+                else
+                {
+                    Target.AnimationId = Target.CombatManager.Weapon.Animation.BlockId;
+                    switch (Target)
+                    {
+                        case Player playerEntity:
+                            playerEntity.Flags |= PlayerUpdateFlags.Animation;
+                            playerEntity.Flags |= PlayerUpdateFlags.SingleHit;
+                            playerEntity.IsUpdateRequired = true;
+                            break;
+                        case NPC npcEntity:
+                            npcEntity.Flags |= NPCUpdateFlags.Animation;
+                            npcEntity.Flags |= NPCUpdateFlags.SingleHit;
+                            npcEntity.IsUpdateRequired = true;
+                            break;
+                        default:
+                            Console.WriteLine("Unknown entity type");
+                            break;
+                    }
                 }
             }
         }
@@ -103,41 +139,8 @@ public class MeleeCombatHandler : ICombatManager
         /* Set block flag */
         DamageTaken = damage;
         _attacker.Health -= damage;
+        _attacker.CombatManager.TookDamage = true;
         ConsoleColorHelper.Broadcast(0, $"[{_attacker.Health}] {_attacker.Name} Took {damage} Damage!");
-        
-        switch (_attacker)
-        {
-            case Player playerEntity:
-                playerEntity.Flags |= PlayerUpdateFlags.Animation;
-                playerEntity.AnimationId = Weapon.Animation.AttackId;
-                playerEntity.IsUpdateRequired = true;
-                break;
-            case NPC npcEntity:
-                npcEntity.Flags |= NPCUpdateFlags.Animation;
-                npcEntity.AnimationId = Weapon.Animation.AttackId;
-                npcEntity.IsUpdateRequired = true;
-                break;
-            default:
-                Console.WriteLine("Unknown entity type");
-                break;
-        }
-                
-        switch (Target)
-        {
-            case Player playerEntity:
-                playerEntity.Flags |= PlayerUpdateFlags.Animation;
-                playerEntity.AnimationId = Weapon.Animation.BlockId;
-                playerEntity.IsUpdateRequired = true;
-                break;
-            case NPC npcEntity:
-                npcEntity.Flags |= NPCUpdateFlags.Animation;
-                npcEntity.AnimationId = Weapon.Animation.BlockId;
-                npcEntity.IsUpdateRequired = true;
-                break;
-            default:
-                Console.WriteLine("Unknown entity type");
-                break;
-        }
     }
 
     public void CheckWonBattle()

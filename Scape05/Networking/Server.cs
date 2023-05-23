@@ -123,6 +123,7 @@ public class Server
             player.CombatManager.CheckWonBattle();
             player.CombatManager.CheckLostBattle();
             player.CombatManager.PerformedDamage = null;
+            player.CombatManager.TookDamage = false;
         }
 
         foreach (var npc in NPCs)
@@ -131,6 +132,8 @@ public class Server
             npc.CombatManager.CheckWonBattle();
             npc.CombatManager.CheckLostBattle();
             npc.CombatManager.PerformedDamage = null;
+            npc.CombatManager.TookDamage = false;
+
         }
     }
 
