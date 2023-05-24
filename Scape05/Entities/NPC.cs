@@ -19,6 +19,37 @@ public class NPC : IEntity
     public int MaxHealth { get; set; } = 20;
     public ICombatManager CombatManager { get; set; }
     public int AnimationId { get; set; } = -1;
+
+    public void PerformBlockAnimation()
+    {
+        AnimationId = CombatManager.Weapon.Animation.BlockId;
+        Flags |= NPCUpdateFlags.Animation;
+        IsUpdateRequired = true;
+    }
+
+    public void PerformAttackAnimation()
+    {
+        AnimationId = CombatManager.Weapon.Animation.AttackId;
+        Flags |= NPCUpdateFlags.Animation;
+        IsUpdateRequired = true;
+    }
+
+    public void DisplayHitSplat()
+    {
+        Flags |= NPCUpdateFlags.SingleHit;
+        IsUpdateRequired = true;
+    }
+
+    public void NotifyAttacked(IEntity attacker)
+    {
+        Console.WriteLine($"{Name} Notified Attack by: {attacker.Name}");
+        // Engage in combat with the attacker
+        CombatBase.Attacker = this;
+        CombatBase.Target = attacker;
+        CombatBase.Tick = 2;
+    }
+
+    public ICombatBase CombatBase { get; set; }
     public NPCMovementHandler MovementHandler { get; set; }
     public bool CanWalk { get; set; }
     public Face Face { get; set; }
@@ -28,5 +59,9 @@ public class NPC : IEntity
         MovementHandler = new NPCMovementHandler(this);
         CombatManager = new MeleeCombatHandler(this);
         CombatManager.Weapon = new(4151, 1, 5, new CombatAnimations(422, 404, 1111), WeaponType.SWORD); //422, 404
+        CombatBase  = new MeleeCombat
+        {
+            WeaponSpeed = 4
+        };
     }
 }

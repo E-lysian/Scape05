@@ -16,8 +16,11 @@ public class AttackNPCPacket : IPacket
         Console.WriteLine($"AttackNPCX: {npc.Location.X} - AttackNPCY: {npc.Location.Y}");
         Console.WriteLine($"Built {nameof(AttackNPCPacket)}");
 
-        player.CombatManager.ShouldInitiate = true;
-        player.CombatManager.IsInitiator = true;
-        player.CombatManager.Target = npc;
+        player.CombatBase.Attacker = player;
+        player.CombatBase.Target = npc;
+
+        // player.CombatManager.ShouldInitiate = true;
+        // player.CombatManager.IsInitiator = true;
+        // player.CombatManager.Target = npc;
     }
 }

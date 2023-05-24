@@ -42,6 +42,11 @@ public class Player : Client, IEntity
         CombatManager = new MeleeCombatHandler(this);
         CombatManager.Weapon = new(4151, 1, 4, new CombatAnimations(1658, 1659, 1111), WeaponType.SWORD);
 
+        CombatBase  = new MeleeCombat
+        {
+            WeaponSpeed = 4
+        };
+        
         Location = new Location(3183, 3440);
         BuildArea = new BuildArea(this);
 
@@ -49,6 +54,37 @@ public class Player : Client, IEntity
         InitializePlayerAppearance();
         InitializePlayerEquipment();
     }
+    
+    public void PerformBlockAnimation()
+    {
+        AnimationId = CombatManager.Weapon.Animation.BlockId;
+        Flags |= PlayerUpdateFlags.Animation;
+        IsUpdateRequired = true;
+    }
+
+    public void PerformAttackAnimation()
+    {
+        AnimationId = CombatManager.Weapon.Animation.AttackId;
+        Flags |= PlayerUpdateFlags.Animation;
+        IsUpdateRequired = true;
+    }
+
+    public void DisplayHitSplat()
+    {
+        Flags |= PlayerUpdateFlags.SingleHit;
+        IsUpdateRequired = true;
+    }
+
+    public void NotifyAttacked(IEntity attacker)
+    {
+        Console.WriteLine($"{Name} Notified Attack by: {attacker.Name}");
+        // Engage in combat with the attacker
+        CombatBase.Attacker = this;
+        CombatBase.Target = attacker;
+        CombatBase.Tick -= 1;
+    }
+
+    public ICombatBase CombatBase { get; set; }  
 
     public void Login()
     {
