@@ -16,6 +16,7 @@ public class Server
         /* Combat Updates */
         PerformAttack(Players, NPCs);
 
+
         /* Player Movement & Appearance*/
         UpdatePlayers();
 
@@ -25,11 +26,12 @@ public class Server
         FlushClients();
 
         ResetPlayers();
+        ResetNPCs();
         
         foreach (var entity in Players.Concat<IEntity>(NPCs))
         {
             if (entity == null) continue;
-            entity.CombatBase.DamageTaken = null;
+            // entity.CombatBase.DamageTaken = null;
             if (entity.Health <= 0)
             {
                 if (entity.CombatBase.Target != null)
@@ -37,10 +39,12 @@ public class Server
                     entity.CombatBase.Target.CombatBase.Target = null;
                     entity.CombatBase.Target = null;
                 }
-                
+
                 entity.PerformAnimation(836);
             }
         }
+        
+
     }
 
 
@@ -235,6 +239,17 @@ public class Server
                 continue;
 
             player.Reset();
+        }
+    }
+
+    private void ResetNPCs()
+    {
+        foreach (var npc in NPCs)
+        {
+            if (npc == null)
+                continue;
+
+            npc.Reset();
         }
     }
 

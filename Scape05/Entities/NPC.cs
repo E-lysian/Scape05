@@ -71,4 +71,15 @@ public class NPC : IEntity
             WeaponSpeed = 6
         };
     }
+
+    public void Reset()
+    {
+        NeedsPlacement = false;
+        IsUpdateRequired = false;
+        Flags = NPCUpdateFlags.None;
+        MovementHandler.PrimaryDirection = -1;
+        MovementHandler.SecondaryDirection = -1;
+        AnimationId = -1;
+        CombatBase.DamageTaken = null;
+    }
 }

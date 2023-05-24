@@ -163,5 +163,6 @@ public class Player : Client, IEntity
         MovementHandler.PrimaryDirection = -1;
         MovementHandler.SecondaryDirection = -1;
         AnimationId = -1;
+        CombatBase.DamageTaken = null;
     }
 }
