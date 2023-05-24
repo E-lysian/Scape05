@@ -8,6 +8,9 @@ public class RegularWalkPacket : IPacket
 
     public void Build(Player player)
     {
+        
+        player.CombatBase.Target = null;
+        
         var _destX = -1;
         var _destY = -1;
         var length = player.PacketHandler.PacketLength;

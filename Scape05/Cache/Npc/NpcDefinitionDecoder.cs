@@ -63,6 +63,7 @@ public class NpcDefinitionDecoder
 
             if (opcode == 0)
             {
+                //2745
                 return definition;
             }
 

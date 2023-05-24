@@ -12,4 +12,5 @@ public interface ICombatBase
     
     public CombatHit DamageTaken { get; set; }
     bool NeedsToInitiate { get; set; }
+    public bool InCombat { get; set; }
 }
