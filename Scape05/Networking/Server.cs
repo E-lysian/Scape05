@@ -23,14 +23,24 @@ public class Server
         UpdateNPCs();
 
         FlushClients();
+
+        ResetPlayers();
         
         foreach (var entity in Players.Concat<IEntity>(NPCs))
         {
             if (entity == null) continue;
             entity.CombatBase.DamageTaken = null;
+            if (entity.Health <= 0)
+            {
+                if (entity.CombatBase.Target != null)
+                {
+                    entity.CombatBase.Target.CombatBase.Target = null;
+                    entity.CombatBase.Target = null;
+                }
+                
+                entity.PerformAnimation(836);
+            }
         }
-        
-        ResetPlayers();
     }
 
 
@@ -81,7 +91,7 @@ public class Server
         foreach (var player in players)
         {
             if (player == null) continue;
-            
+
             var attacker = player.CombatBase.Attacker;
             var target = player.CombatBase.Target;
 
@@ -89,7 +99,7 @@ public class Server
             {
                 continue;
             }
-            
+
             if (attacker.CombatBase.DamageTaken != null && target.CombatBase.DamageTaken != null)
             {
                 Console.WriteLine($"{player.Name} took damage this tick, and so did their target {target.Name}");
@@ -115,21 +125,18 @@ public class Server
                 // Target performs block animation
                 //target.PerformBlockAnimation();
                 attacker.PerformBlockAnimation();
-                
             }
             else if (target.CombatBase.DamageTaken != null)
             {
                 Console.WriteLine($"{target.Name} took damage this tick.");
                 attacker.PerformAttackAnimation();
-                
+
                 // Target displays hit splat
                 target.DisplayHitSplat();
                 target.PerformBlockAnimation();
                 // Target performs block animation
                 target.PerformBlockAnimation();
-                
             }
-            
         }
     }
 

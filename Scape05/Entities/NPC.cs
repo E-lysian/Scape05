@@ -15,8 +15,8 @@ public class NPC : IEntity
     public NPCUpdateFlags Flags { get; set; }
     public int Size { get; set; } = -1;
     public int CombatLevel { get; set; } = 1;
-    public int Health { get; set; } = 20;
-    public int MaxHealth { get; set; } = 20;
+    public int Health { get; set; } = 25;
+    public int MaxHealth { get; set; } = 25;
     public ICombatManager CombatManager { get; set; }
     public int AnimationId { get; set; } = -1;
 
@@ -49,6 +49,13 @@ public class NPC : IEntity
         CombatBase.Tick = 2;
     }
 
+    public void PerformAnimation(int animId)
+    {
+        AnimationId = animId;
+        Flags |= NPCUpdateFlags.Animation;
+        IsUpdateRequired = true;
+    }
+
     public ICombatBase CombatBase { get; set; }
     public NPCMovementHandler MovementHandler { get; set; }
     public bool CanWalk { get; set; }
@@ -61,7 +68,7 @@ public class NPC : IEntity
         CombatManager.Weapon = new(4151, 1, 5, new CombatAnimations(422, 404, 1111), WeaponType.SWORD); //422, 404
         CombatBase  = new MeleeCombat
         {
-            WeaponSpeed = 4
+            WeaponSpeed = 6
         };
     }
 }

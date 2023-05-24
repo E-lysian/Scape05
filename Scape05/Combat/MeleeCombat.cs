@@ -1,4 +1,5 @@
 ﻿using Scape05.Entities;
+using Scape05.Misc;
 
 namespace Scape05.Engine.Combat;
 
@@ -25,6 +26,11 @@ public class MeleeCombat : ICombatBase
         
         if (Attacker.CombatBase.Tick >= Attacker.CombatBase.WeaponSpeed)
         {
+            if (Target.CombatBase.Target != Attacker)
+            {
+                Target.NotifyAttacked(Attacker);
+            }
+            
             var damage  = CalculateDamage();
             Target.CombatBase.DamageTaken = damage;
             Target.Health -= damage.Damage;
@@ -32,10 +38,12 @@ public class MeleeCombat : ICombatBase
             Console.WriteLine($"{Attacker.Name} Attacked: {Target.Name}.");
             Attacker.CombatBase.Tick = 0;
 
-            if (Target.CombatBase.Target != Attacker)
+            if (Target.Health <= 0)
             {
-                Target.NotifyAttacked(Attacker);
+                ConsoleColorHelper.Broadcast(1, $"{Attacker.Name} won over {Target.Name}");
             }
+            
+            
         }
 
         Attacker.CombatBase.Tick++;
@@ -45,7 +53,8 @@ public class MeleeCombat : ICombatBase
     {
         return new CombatHit
         {
-            Damage = new Random().Next(1,5),
+            // Damage = new Random().Next(1,5),
+            Damage = 5,
             Type = DamageType.Damage
         };
     }

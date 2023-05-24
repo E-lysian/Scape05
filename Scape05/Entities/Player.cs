@@ -15,8 +15,8 @@ public class Player : Client, IEntity
 
     /* Extract these? */
     public int CombatLevel { get; set; } = 3;
-    public int MaxHealth { get; set; } = 99;
-    public int Health { get; set; } = 70;
+    public int MaxHealth { get; set; } = 15;
+    public int Health { get; set; } = 15;
     public ICombatManager CombatManager { get; set; }
     public int AnimationId { get; set; } = -1;
     public int TotalLevel { get; set; }
@@ -82,6 +82,13 @@ public class Player : Client, IEntity
         CombatBase.Attacker = this;
         CombatBase.Target = attacker;
         CombatBase.Tick -= 1;
+    }
+
+    public void PerformAnimation(int animId)
+    {
+        AnimationId = animId;
+        Flags |= PlayerUpdateFlags.Animation;
+        IsUpdateRequired = true;
     }
 
     public ICombatBase CombatBase { get; set; }  

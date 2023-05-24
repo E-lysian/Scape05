@@ -21,6 +21,7 @@ public interface IEntity
     void PerformAttackAnimation();
     void DisplayHitSplat();
     void NotifyAttacked(IEntity attacker);
+    void PerformAnimation(int animId);
     
     public ICombatBase CombatBase { get; set; }
     
