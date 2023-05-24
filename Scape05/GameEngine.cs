@@ -33,7 +33,6 @@ public class GameEngine
             else
                 Console.WriteLine($"Server can't keep up!\nElapsed: {(int)stopwatch.ElapsedMilliseconds}\nElapsed: {sleepDelta}");
             stopwatch.Reset();
-            Console.WriteLine("Tick");
         }
     }
 

@@ -1,4 +1,5 @@
 ﻿using Scape05.Engine.Combat;
+using Scape05.Handlers;
 
 namespace Scape05.Entities;
 
@@ -22,7 +23,7 @@ public interface IEntity
     void DisplayHitSplat();
     void NotifyAttacked(IEntity attacker);
     void PerformAnimation(int animId);
-    
+    public DelayedTaskHandler DelayedTaskHandler { get; set; }
     public ICombatBase CombatBase { get; set; }
     
 }

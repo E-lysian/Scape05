@@ -1,4 +1,5 @@
 ﻿using Scape05.Entities.Packets;
+using Scape05.Handlers;
 using Scape05.Misc;
 using Scape05.Updaters;
 
@@ -27,7 +28,7 @@ public class Server
 
         ResetPlayers();
         ResetNPCs();
-        
+
         foreach (var entity in Players.Concat<IEntity>(NPCs))
         {
             if (entity == null) continue;
@@ -41,10 +42,16 @@ public class Server
                 }
 
                 entity.PerformAnimation(836);
+                entity.DelayedTaskHandler.RegisterDelayedTask(new BattleEndDelayedTask(entity));
+                /* Register respawn as a delayed tick task */
             }
         }
-        
 
+        foreach (var entity in Players.Concat<IEntity>(NPCs))
+        {
+            if (entity == null) continue;
+            entity.DelayedTaskHandler.HandleDelayedTasks();
+        }
     }
 
 

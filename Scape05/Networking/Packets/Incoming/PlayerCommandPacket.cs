@@ -24,6 +24,12 @@ public class PlayerCommandPacket : IPacket
             case "damage":
                 PacketBuilder.TakeDamage(player);
                 break;
+            case "pos":
+                PacketBuilder.SendMessage($"X: {player.Location.X} - Y: {player.Location.Y}", player);
+                PacketBuilder.SendMessage($"BuildAreaStartX: {player.BuildArea.BuildAreaStartX} - BuildAreaStartY: {player.BuildArea.BuildAreaStartY}", player);
+                PacketBuilder.SendMessage($"BuildAreaOffsetChunkX: {player.BuildArea.OffsetChunkX} - BuildAreaOffsetChunkY: {player.BuildArea.OffsetChunkY}", player);
+                PacketBuilder.SendMessage($"LocalX: {player.BuildArea.GetPositionRelativeToOffsetChunkX()} - LocalY: {player.BuildArea.GetPositionRelativeToOffsetChunkY()}", player);
+                break;
             default:
                 PacketBuilder.SendMessage($"Unknown command: '{_commandArgs[0]}'", player);
                 break;

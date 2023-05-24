@@ -1,4 +1,5 @@
 ﻿using Scape05.Engine.Combat;
+using Scape05.Handlers;
 using Scape05.Misc;
 
 namespace Scape05.Entities;
@@ -55,6 +56,8 @@ public class NPC : IEntity
         Flags |= NPCUpdateFlags.Animation;
         IsUpdateRequired = true;
     }
+
+    public DelayedTaskHandler DelayedTaskHandler { get; set; } = new();
 
     public ICombatBase CombatBase { get; set; }
     public NPCMovementHandler MovementHandler { get; set; }

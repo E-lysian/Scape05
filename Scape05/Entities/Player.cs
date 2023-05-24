@@ -1,5 +1,6 @@
 ﻿using Scape05.Engine.Combat;
 using Scape05.Entities.Packets;
+using Scape05.Handlers;
 using Scape05.Managers;
 using Scape05.Misc;
 using Scape05.Updaters;
@@ -48,6 +49,7 @@ public class Player : Client, IEntity
         };
         
         Location = new Location(3183, 3440);
+        // Location = new Location(3200, 3200);
         BuildArea = new BuildArea(this);
 
         InitializePlayerColors();
@@ -90,6 +92,8 @@ public class Player : Client, IEntity
         Flags |= PlayerUpdateFlags.Animation;
         IsUpdateRequired = true;
     }
+
+    public DelayedTaskHandler DelayedTaskHandler { get; set; } = new();
 
     public ICombatBase CombatBase { get; set; }  
 

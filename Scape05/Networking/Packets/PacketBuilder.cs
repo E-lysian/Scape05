@@ -52,5 +52,17 @@ public static class PacketBuilder
         TakeDamagePacketCommand packetCommand = TakeDamagePacketCommand.Create();
         packetCommand.Execute(player);
     }
+    
+    public static void Respawn(Player player)
+    {
+        RespawnPacketCommand packetCommand = RespawnPacketCommand.Create();
+        packetCommand.Execute(player);
+    }
+    
+    public static void ResetAnimation(Player player)
+    {
+        AnimationResetPacketCommand packetCommand = AnimationResetPacketCommand.Create();
+        packetCommand.Execute(player);
+    }
 }
 
