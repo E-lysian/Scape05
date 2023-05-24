@@ -142,8 +142,8 @@ public class NPCUpdater
         
         if ((mask & NPCUpdateFlags.SingleHit) != 0)
         {
-            updateBlock.WriteByteA((byte)npc.CombatManager.DamageTaken); //hitDamage
-            updateBlock.WriteByteC((byte)1); //hitType
+            updateBlock.WriteByteA((byte)npc.CombatBase.DamageTaken.Damage); //hitDamage
+            updateBlock.WriteByteC((byte)npc.CombatBase.DamageTaken.Type); //hitType
             updateBlock.WriteByteA(npc.Health); //currentHealth
             updateBlock.WriteByte(npc.MaxHealth); //maxHealth
         }

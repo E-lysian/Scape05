@@ -6,7 +6,7 @@ public class MeleeCombat : ICombatBase
 {
     public IEntity Attacker { get; set; }
     public IEntity Target { get; set; }
-    public int DamageTaken { get; set; } = -1;
+    public CombatHit DamageTaken { get; set; } = null;
     public bool NeedsToInitiate { get; set; }
     public int Tick { get; set; }
     public int WeaponSpeed { get; set; }
@@ -25,7 +25,10 @@ public class MeleeCombat : ICombatBase
         
         if (Attacker.CombatBase.Tick >= Attacker.CombatBase.WeaponSpeed)
         {
-            Target.CombatBase.DamageTaken = 2;
+            var damage  = CalculateDamage();
+            Target.CombatBase.DamageTaken = damage;
+            Target.Health -= damage.Damage;
+            
             Console.WriteLine($"{Attacker.Name} Attacked: {Target.Name}.");
             Attacker.CombatBase.Tick = 0;
 
@@ -36,5 +39,14 @@ public class MeleeCombat : ICombatBase
         }
 
         Attacker.CombatBase.Tick++;
+    }
+
+    private CombatHit CalculateDamage()
+    {
+        return new CombatHit
+        {
+            Damage = new Random().Next(1,5),
+            Type = DamageType.Damage
+        };
     }
 }

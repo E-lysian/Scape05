@@ -27,7 +27,7 @@ public class Server
         foreach (var entity in Players.Concat<IEntity>(NPCs))
         {
             if (entity == null) continue;
-            entity.CombatBase.DamageTaken = -1;
+            entity.CombatBase.DamageTaken = null;
         }
         
         ResetPlayers();
@@ -90,7 +90,7 @@ public class Server
                 continue;
             }
             
-            if (attacker.CombatBase.DamageTaken != -1 && target.CombatBase.DamageTaken != -1)
+            if (attacker.CombatBase.DamageTaken != null && target.CombatBase.DamageTaken != null)
             {
                 Console.WriteLine($"{player.Name} took damage this tick, and so did their target {target.Name}");
 
@@ -102,7 +102,7 @@ public class Server
                 attacker.DisplayHitSplat();
                 target.DisplayHitSplat();
             }
-            else if (player.CombatBase.DamageTaken != -1)
+            else if (player.CombatBase.DamageTaken != null)
             {
                 Console.WriteLine($"{player.Name} took damage this tick.");
 
@@ -117,7 +117,7 @@ public class Server
                 attacker.PerformBlockAnimation();
                 
             }
-            else if (target.CombatBase.DamageTaken != -1)
+            else if (target.CombatBase.DamageTaken != null)
             {
                 Console.WriteLine($"{target.Name} took damage this tick.");
                 attacker.PerformAttackAnimation();

@@ -10,6 +10,6 @@ public interface ICombatBase
     public int WeaponSpeed { get; set; }
     void Attack();
     
-    public int DamageTaken { get; set; }
+    public CombatHit DamageTaken { get; set; }
     bool NeedsToInitiate { get; set; }
 }
