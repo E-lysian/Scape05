@@ -11,4 +11,5 @@ public interface ICombatBase
     void Attack();
     
     public int DamageTaken { get; set; }
+    bool NeedsToInitiate { get; set; }
 }

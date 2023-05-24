@@ -7,6 +7,7 @@ public class MeleeCombat : ICombatBase
     public IEntity Attacker { get; set; }
     public IEntity Target { get; set; }
     public int DamageTaken { get; set; } = -1;
+    public bool NeedsToInitiate { get; set; }
     public int Tick { get; set; }
     public int WeaponSpeed { get; set; }
 
@@ -16,6 +17,12 @@ public class MeleeCombat : ICombatBase
             return;
         Console.WriteLine($"CombatTick: {Tick}");
 
+        if (NeedsToInitiate)
+        {
+            Attacker.CombatBase.Tick = Attacker.CombatBase.WeaponSpeed;
+            NeedsToInitiate = false;
+        }
+        
         if (Attacker.CombatBase.Tick >= Attacker.CombatBase.WeaponSpeed)
         {
             Target.CombatBase.DamageTaken = 2;

@@ -17,6 +17,7 @@ public class AttackNPCPacket : IPacket
         Console.WriteLine($"Built {nameof(AttackNPCPacket)}");
 
         player.CombatBase.Attacker = player;
+        player.CombatBase.NeedsToInitiate = true;
         player.CombatBase.Target = npc;
 
         // player.CombatManager.ShouldInitiate = true;
