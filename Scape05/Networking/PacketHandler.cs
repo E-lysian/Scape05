@@ -28,6 +28,7 @@ public class PacketHandler
         _packets = new List<IPacket>
         {
             new RegularWalkPacket(),
+            new WalkToObjectPacket(),
             new PlayerCommandPacket(),
             new AttackNPCPacket()
         };

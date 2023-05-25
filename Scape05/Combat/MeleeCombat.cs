@@ -1,4 +1,5 @@
-﻿using Scape05.Entities;
+﻿using System.Numerics;
+using Scape05.Entities;
 using Scape05.Entities.Packets;
 using Scape05.Misc;
 
@@ -22,6 +23,11 @@ public class MeleeCombat : ICombatBase
 
         if (CanMeleeAttack())
         {
+            if (Attacker is Player)
+            {
+                PacketBuilder.SendMessage("Can attack from here!", (Player)Attacker);
+            }
+
             if (NeedsToInitiate)
             {
                 Attacker.CombatBase.Tick = Attacker.CombatBase.WeaponSpeed;
@@ -62,8 +68,17 @@ public class MeleeCombat : ICombatBase
 
     private bool CanMeleeAttack()
     {
+        var horizontally = Attacker.Location.X >= Target.Location.X - 1 &&
+                           Attacker.Location.X <= Target.Location.X + Target.Size;
+        var vertically = Attacker.Location.Y >= Target.Location.Y - 1 &&
+                         Attacker.Location.Y <= Target.Location.Y + Target.Size;
+
         var delta = Location.Delta(Attacker.Location, Target.Location);
-        return Math.Abs(delta.X) == 1 || Math.Abs(delta.Y) == 1;
+
+        var t = Math.Abs(delta.X) == Math.Abs(delta.Y) && delta.X != 0 && delta.Y != 0;
+
+
+        return horizontally && vertically & !t;
     }
 
     private CombatHit CalculateDamage()

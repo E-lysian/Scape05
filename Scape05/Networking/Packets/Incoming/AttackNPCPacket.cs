@@ -24,16 +24,16 @@ public class AttackNPCPacket : IPacket
 
         if (!_attacker.CombatBase.InCombat)
         {
-            if (CanMeleeAttack())
-            {
-                player.CombatBase.Attacker = player;
-                player.CombatBase.Target = npc;
-                player.CombatBase.NeedsToInitiate = true;
-            }
-            else
-            {
-                PacketBuilder.SendMessage("Can't attack from here.", _attacker);
-            }
+            player.CombatBase.Attacker = player;
+            player.CombatBase.Target = npc;
+            player.CombatBase.NeedsToInitiate = true;
+            // if (CanMeleeAttack())
+            // {
+            // }
+            // else
+            // {
+            //     PacketBuilder.SendMessage("Can't attack from here.", _attacker);
+            // }
         }
         else
         {

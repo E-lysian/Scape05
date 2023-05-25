@@ -48,7 +48,8 @@ public class Player : Client, IEntity
             WeaponSpeed = 4
         };
         
-        Location = new Location(3183, 3440);
+        // Location = new Location(3183, 3440);
+        Location = new Location(3280, 3596);
         // Location = new Location(3200, 3200);
         BuildArea = new BuildArea(this);
 
