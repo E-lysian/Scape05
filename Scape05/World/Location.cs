@@ -28,4 +28,24 @@ public class Location
     {
         return new Location(b.X - a.X, b.Y - a.Y);
     }
+    
+    public Location[] GetOuterTiles(int size)
+    {
+        Location[] tiles = new Location[size * 4];
+        int index = 0;
+
+        for (int x = 0; x < size; x++)
+        {
+            tiles[index++] = new Location(X + x, Y - 1);
+            tiles[index++] = new Location(X + x, Y + size);
+        }
+
+        for (int y = 0; y < size; y++)
+        {
+            tiles[index++] = new Location(X - 1, Y + y);
+            tiles[index++] = new Location(X + size, Y + y);
+        }
+
+        return tiles;
+    }
 }

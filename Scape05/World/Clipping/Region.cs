@@ -836,7 +836,7 @@ public class Region
         return true;
     }
 
-    public bool canInteract(ObjectDefinition target, int dstX, int dstY, int absX, int absY, int curX,
+    public static bool canInteract(int dstX, int dstY, int absX, int absY, int curX,
         int curY, int sizeX, int sizeY, int walkToData)
     {
         if ((walkToData & 0x80000000) != 0)

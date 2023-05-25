@@ -48,9 +48,19 @@ public class Player : Client, IEntity
             WeaponSpeed = 4
         };
         
-        // Location = new Location(3183, 3440);
-        Location = new Location(3280, 3596);
-        // Location = new Location(3200, 3200);
+        var Lumbridge = new Location(3200, 3200);
+        var Goblins = new Location(3253, 3235);
+        var AlKharidObstructedTree = new Location(3268, 3230);
+        var FallyCrossroads = new Location(3008, 3278);
+        var FallyBank = new Location(3006, 3354);
+        var KBD = new Location(2717, 9808);
+        var Varrock = new Location(3214, 3424);
+        var FallyNorthStatue = new Location(2973, 3412);
+        var Edgeville = new Location(3093, 3493);
+        var Tree = new Location(3234, 3229);
+        var VWestBank = new Location(3183, 3440);
+        
+        Location = VWestBank;
         BuildArea = new BuildArea(this);
 
         InitializePlayerColors();

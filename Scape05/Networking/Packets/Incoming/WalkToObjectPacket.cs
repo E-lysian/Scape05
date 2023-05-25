@@ -54,6 +54,8 @@ public class WalkToObjectPacket : IPacket
         
         //client.IsUpdateRequired = true;
         
+        PacketBuilder.SendMessage($"DestX: {_destX} DestY: {_destY}", player);
+        
         var tiles = new List<Location>();
         if (path.Length > 0)
             tiles = PathFinder.getPathFinder().FindRoute(player, _destX, _destY, true, 1, 1);

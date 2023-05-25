@@ -69,9 +69,14 @@ public class PathFinder
                 break;
             }
 
+            /* Absolute magic, stops before the NPC at the closest tile :sob: */
+             if (xLength != 0 && yLength != 0 && Region.canInteract(destX, destY,curAbsX, curAbsY, curX,curY, xLength, yLength, 0)) {
+                 foundPath = true;
+                 break;
+             }
+            
             tail = (tail + 1) % pathLength;
             var thisCost = cost[curX][curY] + 1;
-
             if (curY > 0 && via[curX][curY - 1] == 0 &&
                 (Region.GetClipping(curAbsX, curAbsY - 1, player.Location.Height) & 0x1280102) == 0)
             {
