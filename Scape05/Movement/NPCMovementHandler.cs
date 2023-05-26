@@ -1,4 +1,6 @@
-﻿namespace Scape05.Entities;
+﻿using Scape05.Entities.Packets;
+
+namespace Scape05.Entities;
 
 public class NPCMovementHandler
 {
@@ -14,8 +16,69 @@ public class NPCMovementHandler
         _npc = npc;
     }
 
+    public bool IsAdjacentTo(Location location, Location otherLocation)
+    {
+        /* Needs to take size into consideration */
+        int deltaX = Math.Abs(location.X - otherLocation.X);
+        int deltaY = Math.Abs(location.Y - otherLocation.Y);
+
+        return (deltaX == 1 && deltaY == 0) || (deltaX == 0 && deltaY == 1);
+    }
+
     public void Process()
     {
+        /* If it has a target and is not there yet */
+
+        if (_npc.Follow != null)
+        {
+            Reset();
+            /* Follow Logic */
+            if (!IsAdjacentTo(_npc.Location, _npc.Follow.Location))
+            {
+                Location npcLocation = _npc.Location;
+                Location playerLocation = _npc.Follow.Location;
+
+                int deltaX = playerLocation.X - npcLocation.X;
+                int deltaY = playerLocation.Y - npcLocation.Y;
+
+                if (deltaX == 0 && deltaY == 0)
+                {
+                    // Same location, no need to move
+                    return;
+                }
+
+                int xDirection = 0;
+                int yDirection = 0;
+
+                if (deltaX > 0)
+                {
+                    // Same X axis, move on the Y axis
+                    xDirection = deltaX > 0 ? 1 : -1;
+                }
+                else if (deltaX < 0)
+                {
+                    // Same Y axis, move on the X axis
+                    xDirection = deltaX > 0 ? 1 : -1;
+                }
+                
+                else if (deltaY > 0)
+                {
+                    // Same X axis, move on the Y axis
+                    yDirection = deltaY > 0 ? 1 : -1;
+                }
+                else if (deltaY < 0)
+                {
+                    // Same Y axis, move on the X axis
+                    yDirection = deltaY > 0 ? 1 : -1;
+                }
+
+                Location newLocation = new Location(npcLocation.X + xDirection, npcLocation.Y + yDirection);
+                AddToPath(newLocation);
+            }
+
+            Finish();
+        }
+
         if (waypoints.Count == 0)
             return;
 

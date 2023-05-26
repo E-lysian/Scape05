@@ -10,6 +10,7 @@ public class NPC : IEntity
     public string Name { get; set; }
     public int ModelId { get; set; }
     public Location Location { get; set; }
+    public BuildArea BuildArea { get; set; }
     public int HeadIcon { get; set; }
     public bool IsUpdateRequired { get; set; }
     public bool NeedsPlacement { get; set; }
@@ -63,12 +64,14 @@ public class NPC : IEntity
     public NPCMovementHandler MovementHandler { get; set; }
     public bool CanWalk { get; set; }
     public Face Face { get; set; }
+    public Player Follow { get; set; } = null;
 
     public NPC()
     {
         MovementHandler = new NPCMovementHandler(this);
         CombatManager = new MeleeCombatHandler(this);
         CombatManager.Weapon = new(4151, 1, 5, new CombatAnimations(422, 404, 1111), WeaponType.SWORD); //422, 404
+        
         CombatBase  = new MeleeCombat
         {
             WeaponSpeed = 6
@@ -80,8 +83,8 @@ public class NPC : IEntity
         NeedsPlacement = false;
         IsUpdateRequired = false;
         Flags = NPCUpdateFlags.None;
-        MovementHandler.PrimaryDirection = -1;
-        MovementHandler.SecondaryDirection = -1;
+        //MovementHandler.PrimaryDirection = -1;
+        //MovementHandler.SecondaryDirection = -1;
         AnimationId = -1;
         CombatBase.DamageTaken = null;
     }

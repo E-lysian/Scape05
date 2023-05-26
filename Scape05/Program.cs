@@ -24,7 +24,7 @@ var ifs = new IndexedFileSystem("./cache", true);
 
 Benchmarker.MeasureTime(() => ParseCache(ifs), "Parsing cache");
 Benchmarker.MeasureTime(() => LoadRegionFactory(ifs), "Loading regions");
-Benchmarker.MeasureTime(NPCLoader.Load, "Loading NPCs");
+//Benchmarker.MeasureTime(NPCLoader.Load, "Loading NPCs");
 
 GameEngine engine = new GameEngine();
 engine.Start();

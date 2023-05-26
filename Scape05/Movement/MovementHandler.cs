@@ -21,28 +21,30 @@ public class MovementHandler
 
     public void Process()
     {
+        
+        if (_client.CombatBase.Target != null)
+        {
+            PacketBuilder.SendMessage("Following..", _client);
+            _client.MovementHandler.Reset();
+
+            var x = _client.CombatBase.Target.Location.X;
+            var y = _client.CombatBase.Target.Location.Y;
+
+            /* Follow */
+            var tiles = new List<Location>();
+            tiles = PathFinder.getPathFinder().FindRoute(_client, x, y, true, 1, 1);
+
+            if (tiles != null)
+            {
+                for (var i = 0; i < tiles.Count; i++) _client.MovementHandler.AddToPath(tiles[i]);
+
+                /* Remove the first waypoint, aka the tile we're standing on, otherwise it'll take an extra tick to start walking */
+                _client.MovementHandler.Finish();
+            }
+        }
+
         if (waypoints.Count == 0)
             return;
-
-         if (_client.CombatBase.Target != null)
-         {
-             _client.MovementHandler.Reset();
-        
-             var x = _client.CombatBase.Target.Location.X;
-             var y = _client.CombatBase.Target.Location.Y;
-        
-             /* Follow */
-             var tiles = new List<Location>();
-             tiles = PathFinder.getPathFinder().FindRoute(_client, x, y, true, 1, 1);
-        
-             if (tiles != null)
-             {
-                 for (var i = 0; i < tiles.Count; i++) _client.MovementHandler.AddToPath(tiles[i]);
-        
-                 /* Remove the first waypoint, aka the tile we're standing on, otherwise it'll take an extra tick to start walking */
-                 _client.MovementHandler.Finish();
-             }
-         }
 
         var walkPoint = waypoints.First.Value;
         waypoints.RemoveFirst();

@@ -43,7 +43,7 @@ public class NPCLoader
             Size = npcDef.Size == 0 ? 1 : npcDef.Size,
             Name = npcDef.Name
         };
-
+        newNpc.BuildArea = new BuildArea(newNpc);
         return newNpc;
     }
 

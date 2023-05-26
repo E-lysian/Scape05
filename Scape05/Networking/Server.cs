@@ -24,10 +24,16 @@ public class Server
         /* NPC Movement & Appearance */
         UpdateNPCs();
 
+        foreach (var npc in NPCs)
+        {
+            if (npc == null) continue;
+            npc.MovementHandler.Process();
+        }
+        
         FlushClients();
-
+        
         ResetPlayers();
-        ResetNPCs();
+        //ResetNPCs();
 
         foreach (var entity in Players.Concat<IEntity>(NPCs))
         {
