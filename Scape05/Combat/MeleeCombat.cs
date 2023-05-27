@@ -2,6 +2,7 @@
 using Scape05.Entities;
 using Scape05.Entities.Packets;
 using Scape05.Misc;
+using Scape05.World;
 
 namespace Scape05.Engine.Combat;
 
@@ -21,8 +22,16 @@ public class MeleeCombat : ICombatBase
             return;
         Console.WriteLine($"CombatTick: {Tick}");
 
+        // var canMove = Region.canMove(Attacker.Location.X, Attacker.Location.Y, Target.Location.X, Target.Location.Y, 0, 1, 1);
+        // if (!canMove)
+        // {
+        //     return;
+        // }
+        
         if (CanMeleeAttack())
         {
+            
+
             if (Attacker is Player)
             {
                 PacketBuilder.SendMessage("Can attack from here!", (Player)Attacker);
