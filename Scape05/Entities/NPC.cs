@@ -65,6 +65,7 @@ public class NPC : IEntity
     public bool CanWalk { get; set; }
     public Face Face { get; set; }
     public Player Follow { get; set; } = null;
+    public int InteractingEntityId { get; set; } = 0x00FFFF;
 
     public NPC()
     {

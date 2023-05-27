@@ -28,6 +28,11 @@ public class Location
     {
         return new Location(b.X - a.X, b.Y - a.Y);
     }
+
+    public static bool IsSame(Location l1, Location l2)
+    {
+        return l1.X == l2.X && l1.Y == l2.Y;
+    }
     
     public Location[] GetOuterTiles(int size)
     {

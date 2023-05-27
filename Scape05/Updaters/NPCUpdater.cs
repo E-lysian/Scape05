@@ -122,6 +122,11 @@ public class NPCUpdater
             mask |= NPCUpdateFlags.Animation;
         }
 
+        if (npc.Flags.HasFlag(NPCUpdateFlags.InteractingEntity))
+        {
+            mask |= NPCUpdateFlags.InteractingEntity;
+        }
+        
         if (npc.Flags.HasFlag(NPCUpdateFlags.SingleHit))
         {
             mask |= NPCUpdateFlags.SingleHit;
@@ -138,6 +143,13 @@ public class NPCUpdater
         {
             updateBlock.WriteWordBigEndian(npc.AnimationId); //866 //1365 wc
             updateBlock.WriteByte(0); //delay
+        }
+        
+        
+        if ((mask & NPCUpdateFlags.InteractingEntity) != 0)
+        {
+            var id = npc.InteractingEntityId;
+            updateBlock.WriteWord(id);
         }
         
         if ((mask & NPCUpdateFlags.SingleHit) != 0)

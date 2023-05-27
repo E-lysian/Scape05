@@ -30,6 +30,9 @@ public class PlayerCommandPacket : IPacket
             case "damage":
                 PacketBuilder.TakeDamage(player);
                 break;
+            case "focus":
+                FocusPlayer();
+                break;
             case "pos":
                 PacketBuilder.SendMessage($"X: {player.Location.X} - Y: {player.Location.Y}", player);
                 PacketBuilder.SendMessage(
@@ -45,6 +48,21 @@ public class PlayerCommandPacket : IPacket
             default:
                 PacketBuilder.SendMessage($"Unknown command: '{_commandArgs[0]}'", player);
                 break;
+        }
+    }
+
+    private void FocusPlayer()
+    {
+        if (int.TryParse(_commandArgs[1], out int npcIndex))
+        {
+            var npc = Server.NPCs[npcIndex];
+            npc.Flags |= NPCUpdateFlags.InteractingEntity;
+            npc.InteractingEntityId = _player.Index + 32768;
+            npc.IsUpdateRequired = true;
+        }
+        else
+        {
+            PacketBuilder.SendMessage($"Invalid command syntax! ::npcwalk [{typeof(UInt16)}]", _player);
         }
     }
 
@@ -70,10 +88,13 @@ public class PlayerCommandPacket : IPacket
         {
             var npc = Server.NPCs[npcIndex];
             npc.Follow = _player;
-            
-            npc.MovementHandler.Reset();
-            npc.MovementHandler.AddToPath(new Location(npc.Location.X, npc.Location.Y - 1));
-            npc.MovementHandler.Finish();
+            npc.Flags |= NPCUpdateFlags.InteractingEntity;
+            npc.InteractingEntityId = npc.Follow.Index + 32768;
+            npc.IsUpdateRequired = true;
+
+            // npc.MovementHandler.Reset();
+            // npc.MovementHandler.AddToPath(new Location(npc.Location.X, npc.Location.Y - 1));
+            // npc.MovementHandler.Finish();
             // npc.IsUpdateRequired = true;
         }
         else

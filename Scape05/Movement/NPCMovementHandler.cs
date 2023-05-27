@@ -1,4 +1,5 @@
 ﻿using Scape05.Entities.Packets;
+using Scape05.World;
 
 namespace Scape05.Entities;
 
@@ -29,55 +30,7 @@ public class NPCMovementHandler
     {
         /* If it has a target and is not there yet */
 
-        if (_npc.Follow != null)
-        {
-            Reset();
-            /* Follow Logic */
-            if (!IsAdjacentTo(_npc.Location, _npc.Follow.Location))
-            {
-                Location npcLocation = _npc.Location;
-                Location playerLocation = _npc.Follow.Location;
-
-                int deltaX = playerLocation.X - npcLocation.X;
-                int deltaY = playerLocation.Y - npcLocation.Y;
-
-                if (deltaX == 0 && deltaY == 0)
-                {
-                    // Same location, no need to move
-                    return;
-                }
-
-                int xDirection = 0;
-                int yDirection = 0;
-
-                if (deltaX > 0)
-                {
-                    // Same X axis, move on the Y axis
-                    xDirection = deltaX > 0 ? 1 : -1;
-                }
-                else if (deltaX < 0)
-                {
-                    // Same Y axis, move on the X axis
-                    xDirection = deltaX > 0 ? 1 : -1;
-                }
-                
-                else if (deltaY > 0)
-                {
-                    // Same X axis, move on the Y axis
-                    yDirection = deltaY > 0 ? 1 : -1;
-                }
-                else if (deltaY < 0)
-                {
-                    // Same Y axis, move on the X axis
-                    yDirection = deltaY > 0 ? 1 : -1;
-                }
-
-                Location newLocation = new Location(npcLocation.X + xDirection, npcLocation.Y + yDirection);
-                AddToPath(newLocation);
-            }
-
-            Finish();
-        }
+        ProcessFollow();
 
         if (waypoints.Count == 0)
             return;
@@ -97,6 +50,185 @@ public class NPCMovementHandler
         {
             MoveToDirection(runPoint.Direction);
             SecondaryDirection = runPoint.Direction;
+        }
+    }
+
+    public static bool IsInDiagonalBlock(Location attacker, Location attacked) {
+        return attacked.X - 1 == attacker.X && attacked.Y + 1 == attacker.Y
+               || attacker.X - 1 == attacked.X && attacker.Y + 1 == attacked.Y
+               || attacked.X + 1 == attacker.X && attacked.Y - 1 == attacker.Y
+               || attacker.X + 1 == attacked.X && attacker.Y - 1 == attacked.Y
+               || attacked.X + 1 == attacker.X && attacked.Y + 1 == attacker.Y
+               || attacker.X + 1 == attacked.X && attacker.Y + 1 == attacked.Y;
+    }
+    
+    private void ProcessFollow()
+    {
+        
+        if (_npc.Follow != null)
+        {
+
+            if (!IsInDiagonalBlock(_npc.Location, _npc.Follow.Location) && Math.Abs(_npc.Location.X - _npc.Follow.Location.X) <= 1 && Math.Abs(_npc.Location.Y - _npc.Follow.Location.Y) <= 1)
+            {
+                return;
+            }
+            
+            //Reset();
+            /* Follow Logic */
+            /* If standing on the same tile, step away */
+            if (Location.IsSame(_npc.Location, _npc.Follow.Location))
+            {
+                var tiles = new List<Location>();
+                foreach (Location tile in _npc.Follow.Location.GetOuterTiles(1))
+                {
+                    /* Check if tile is valid */
+                    if (!Region.canMove(_npc.Location.X, _npc.Location.Y, tile.X, tile.Y, 0, 1, 1))
+                        continue;
+
+                    tiles.Add(tile);
+                }
+
+                if (tiles.Count > 0)
+                {
+                    Random random = new Random();
+                    Location randomTile = tiles[random.Next(tiles.Count)];
+                    AddToPath(randomTile);
+                    Finish();
+                }
+
+                return;
+            }
+
+            int deltaX = _npc.Follow.Location.X - _npc.Location.X;
+            int deltaY = _npc.Follow.Location.Y - _npc.Location.Y;
+
+            if (deltaX < -1)
+            {
+                deltaX = -1;
+            }
+            else if (deltaX > 1)
+            {
+                deltaX = 1;
+            }
+
+            if (deltaY < -1)
+            {
+                deltaY = -1;
+            }
+            else if (deltaY > 1)
+            {
+                deltaY = 1;
+            }
+
+            /* Diagonal */
+            int directionId = MovementHelper.DirectionFromDelta(deltaX, deltaY);
+
+            var startX = _npc.Location.X;
+            var startY = _npc.Location.Y;
+
+            var none = new Location(startX, startY);
+            var west = new Location(startX - 1, startY);
+            var east = new Location(startX + 1, startY);
+            var south = new Location(startX, startY - 1);
+            var north = new Location(startX, startY + 1);
+
+            var direction = none;
+
+            switch (directionId)
+            {
+                case 0: /* North West */
+                    if (Region.canMove(startX, startY, west.X, west.Y, 0, 1, 1))
+                    {
+                        direction = west;
+                    }
+                    else if (Region.canMove(startX, startY, north.X, north.Y, 0, 1, 1))
+                    {
+                        direction = north;
+                    }
+                    else
+                    {
+                        direction = none;
+                    }
+
+                    break;
+                case 2: /* North East*/
+                    if (Region.canMove(startX, startY, north.X, north.Y, 0, 1, 1))
+                    {
+                        direction = north;
+                    }
+                    else if (Region.canMove(startX, startY, east.X, east.Y, 0, 1, 1))
+                    {
+                        direction = east;
+                    }
+                    else
+                    {
+                        direction = none;
+                    }
+
+                    break;
+                case 5: /* South West */
+                    if (Region.canMove(startX, startY, west.X, west.Y, 0, 1, 1))
+                    {
+                        direction = west;
+                    }
+                    else if (Region.canMove(startX, startY, south.X, south.Y, 0, 1, 1))
+                    {
+                        direction = south;
+                    }
+                    else
+                    {
+                        direction = none;
+                    }
+
+                    break;
+                case 7: /* South East*/
+                    if (Region.canMove(startX, startY, east.X, east.Y, 0, 1, 1))
+                    {
+                        direction = east;
+                    }
+                    else if (Region.canMove(startX, startY, south.X, south.Y, 0, 1, 1))
+                    {
+                        direction = south;
+                    }
+                    else
+                    {
+                        direction = none;
+                    }
+
+                    break;
+                default:
+                    break;
+            }
+
+            if (direction == _npc.Location)
+            {
+                return;
+            }
+
+            if (directionId == 6) /* South */
+            {
+                direction.Y -= 1;
+            }
+            else if (directionId == 4) /* East */
+            {
+                direction.X += 1;
+            }
+            else if (directionId == 3) /* West */
+            {
+                direction.X -= 1;
+            }
+            else if (directionId == 1) /* North */
+            {
+                direction.Y += 1;
+            }
+
+            var next = new Location(direction.X, direction.Y);
+            Console.WriteLine($"NextX: {next.X} - NextY: {next.Y}");
+            if (Region.canMove(startX, startY, next.X, next.Y, 0, 1, 1))
+            {
+                AddToPath(next);
+                Finish();
+            }
         }
     }
 
