@@ -22,11 +22,11 @@ public class MeleeCombat : ICombatBase
             return;
         Console.WriteLine($"CombatTick: {Tick}");
 
-        // var canMove = Region.canMove(Attacker.Location.X, Attacker.Location.Y, Target.Location.X, Target.Location.Y, 0, 1, 1);
-        // if (!canMove)
-        // {
-        //     return;
-        // }
+        var canMove = Region.canMove(Attacker.Location.X, Attacker.Location.Y, Target.Location.X, Target.Location.Y, 0, 1, 1);
+        if (!canMove)
+        {
+            return;
+        }
         
         if (CanMeleeAttack())
         {

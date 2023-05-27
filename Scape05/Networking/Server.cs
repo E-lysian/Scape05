@@ -33,7 +33,7 @@ public class Server
         FlushClients();
         
         ResetPlayers();
-        //ResetNPCs();
+        ResetNPCs();
 
         foreach (var entity in Players.Concat<IEntity>(NPCs))
         {
