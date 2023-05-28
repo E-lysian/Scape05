@@ -128,9 +128,28 @@ public class MeleeCombatHandler : ICombatManager
 
     public void Alert(IEntity target)
     {
+        /* Set InteractingEntity */
+        
         ConsoleColorHelper.Broadcast(3, $"Alert! {_attacker.Name} was attacked by {target.Name}! Retaliate!");
         Target = target;
-        ShouldInitiate = true;
+
+        switch (Target)
+        {
+            case Player player:
+                player.Flags |= PlayerUpdateFlags.InteractingEntity;
+                player.InteractingEntityId = Target.Index;
+                player.IsUpdateRequired = true;
+                break;
+            case NPC npc:
+                npc.Flags |= NPCUpdateFlags.InteractingEntity;
+                npc.InteractingEntityId = Target.Index + 32768;
+                npc.IsUpdateRequired = true;
+                break;
+            default:
+                break;
+        }
+        
+        
         Initiate();
     }
 

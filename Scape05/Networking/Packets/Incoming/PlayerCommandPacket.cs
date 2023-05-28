@@ -21,6 +21,9 @@ public class PlayerCommandPacket : IPacket
             case "npc":
                 NPCCommand();
                 break;
+            case "tele":
+                Teleport();
+                break;
             case "npcwalk":
                 NPCWalk();
                 break;
@@ -49,6 +52,27 @@ public class PlayerCommandPacket : IPacket
                 PacketBuilder.SendMessage($"Unknown command: '{_commandArgs[0]}'", player);
                 break;
         }
+    }
+
+    private void Teleport()
+    {
+        var px = int.TryParse(_commandArgs[1], out int x);
+        var py = int.TryParse(_commandArgs[2], out int y);
+        var pz = int.TryParse(_commandArgs[3], out int z);
+
+        if (px && py && pz)
+        {
+            _player.Location = new Location(x, y);
+            _player.Location.Height = z;
+            _player.NeedsPlacement = true;
+            _player.IsUpdateRequired = true;
+            PacketBuilder.SendMapRegion(_player);
+        }
+        else
+        {
+            PacketBuilder.SendMessage($"Invalid command syntax! ::tele [{typeof(UInt16)}] [{typeof(UInt16)}] [{typeof(UInt16)}]", _player);
+        }
+        
     }
 
     private void FocusPlayer()

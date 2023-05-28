@@ -60,7 +60,11 @@ public class MeleeCombat : ICombatBase
 
                 if (Target.Health <= 0)
                 {
+                    
                     ConsoleColorHelper.Broadcast(1, $"{Attacker.Name} won over {Target.Name}");
+                    Attacker.Follow = null;
+                    Target.Follow = null;
+                    Attacker.CombatBase.InCombat = false;
                 }
             }
 

@@ -18,6 +18,7 @@ public interface IEntity
     public int MaxHealth { get; set; }
     ICombatManager CombatManager { get; set; }
     public int AnimationId { get; set; }
+    public IEntity Follow { get; set; }
     
     void PerformBlockAnimation();
     void PerformAttackAnimation();

@@ -49,6 +49,10 @@ public class NPC : IEntity
         CombatBase.Attacker = this;
         CombatBase.Target = attacker;
         CombatBase.Tick = 2;
+        NPC npc = (NPC)CombatBase.Attacker;
+
+        npc.Flags |= NPCUpdateFlags.InteractingEntity;
+        npc.InteractingEntityId = attacker.Index + 32768;
     }
 
     public void PerformAnimation(int animId)
@@ -64,7 +68,7 @@ public class NPC : IEntity
     public NPCMovementHandler MovementHandler { get; set; }
     public bool CanWalk { get; set; }
     public Face Face { get; set; }
-    public Player Follow { get; set; } = null;
+    public IEntity Follow { get; set; } = null;
     public int InteractingEntityId { get; set; } = 0x00FFFF;
 
     public NPC()
@@ -72,8 +76,8 @@ public class NPC : IEntity
         MovementHandler = new NPCMovementHandler(this);
         CombatManager = new MeleeCombatHandler(this);
         CombatManager.Weapon = new(4151, 1, 5, new CombatAnimations(422, 404, 1111), WeaponType.SWORD); //422, 404
-        
-        CombatBase  = new MeleeCombat
+
+        CombatBase = new MeleeCombat
         {
             WeaponSpeed = 6
         };

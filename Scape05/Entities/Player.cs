@@ -20,6 +20,7 @@ public class Player : Client, IEntity
     public int Health { get; set; } = 15;
     public ICombatManager CombatManager { get; set; }
     public int AnimationId { get; set; } = -1;
+    public IEntity Follow { get; set; }
     public int TotalLevel { get; set; }
     public bool IsUpdateRequired { get; set; }
     public bool NeedsPlacement { get; set; }
@@ -95,6 +96,10 @@ public class Player : Client, IEntity
         CombatBase.Attacker = this;
         CombatBase.Target = attacker;
         CombatBase.Tick -= 1;
+        
+        Player npc = (Player)CombatBase.Attacker;
+        npc.Flags |= PlayerUpdateFlags.InteractingEntity;
+        npc.InteractingEntityId = attacker.Index;
     }
 
     public void PerformAnimation(int animId)
@@ -106,7 +111,8 @@ public class Player : Client, IEntity
 
     public DelayedTaskHandler DelayedTaskHandler { get; set; } = new();
 
-    public ICombatBase CombatBase { get; set; }  
+    public ICombatBase CombatBase { get; set; }
+    public int InteractingEntityId { get; set; }
 
     public void Login()
     {

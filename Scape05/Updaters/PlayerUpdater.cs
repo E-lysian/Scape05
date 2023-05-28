@@ -172,6 +172,11 @@ public class PlayerUpdater
             mask |= PlayerUpdateFlags.Animation;
         }
         
+        if (mask.HasFlag(PlayerUpdateFlags.InteractingEntity))
+        {
+            mask |= PlayerUpdateFlags.InteractingEntity;
+        }
+        
         if (!mask.HasFlag(PlayerUpdateFlags.Appearance))
         {
             if (forceAppearance)
@@ -197,10 +202,16 @@ public class PlayerUpdater
 
         //if ((mask & PlayerUpdateFlags.Graphics) != 0) AppendGraphics(player, updatetempBlock);
         if ((mask & PlayerUpdateFlags.Animation) != 0) AppendAnimation(player, updatetempBlock, player.AnimationId);
+        if ((mask & PlayerUpdateFlags.InteractingEntity) != 0) AppendInteractingEntity(player, updatetempBlock);
         //if ((mask & PlayerUpdateFlags.InteractingEntity) != 0) AppendNPCInteract(player, updatetempBlock);
         if ((mask & PlayerUpdateFlags.Appearance) != 0 || forceAppearance) AppendAppearance(player, updatetempBlock);
         //if ((mask & PlayerUpdateFlags.FaceDirection) != 0) AppendFaceDirection(player, updatetempBlock);
         if ((mask & PlayerUpdateFlags.SingleHit) != 0) AppendSingleHit(player, updatetempBlock);
+    }
+
+    private void AppendInteractingEntity(Player player, RSStream updatetempBlock)
+    {
+        updatetempBlock.WriteWordBigEndian(player.InteractingEntityId);
     }
 
     private void AppendAnimation(Player player, RSStream updatetempBlock, int playerAnimationId)

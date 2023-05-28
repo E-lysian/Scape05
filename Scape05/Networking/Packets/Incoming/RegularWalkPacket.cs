@@ -1,4 +1,5 @@
-﻿using Scape05.World.Clipping;
+﻿using Scape05.Misc;
+using Scape05.World.Clipping;
 
 namespace Scape05.Entities.Packets.Implementation;
 
@@ -10,6 +11,9 @@ public class RegularWalkPacket : IPacket
     {
         
         player.CombatBase.Target = null;
+        player.Flags |= PlayerUpdateFlags.InteractingEntity;
+        player.InteractingEntityId = 0x00FFFF;
+        player.IsUpdateRequired = true;
         
         var _destX = -1;
         var _destY = -1;

@@ -1,4 +1,6 @@
-﻿namespace Scape05.Entities.Packets.Implementation;
+﻿using Scape05.Misc;
+
+namespace Scape05.Entities.Packets.Implementation;
 
 public class AttackNPCPacket : IPacket
 {
@@ -21,6 +23,9 @@ public class AttackNPCPacket : IPacket
         Console.WriteLine($"AttackNPCX: {npc.Location.X} - AttackNPCY: {npc.Location.Y}");
         Console.WriteLine($"Built {nameof(AttackNPCPacket)}");
 
+        player.Flags |= PlayerUpdateFlags.InteractingEntity;
+        player.InteractingEntityId = _target.Index;
+        player.IsUpdateRequired = true;
 
         if (!_attacker.CombatBase.InCombat)
         {

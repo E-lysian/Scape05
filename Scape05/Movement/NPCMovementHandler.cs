@@ -68,10 +68,6 @@ public class NPCMovementHandler
         if (_npc.Follow != null)
         {
 
-            if (!IsInDiagonalBlock(_npc.Location, _npc.Follow.Location) && Math.Abs(_npc.Location.X - _npc.Follow.Location.X) <= 1 && Math.Abs(_npc.Location.Y - _npc.Follow.Location.Y) <= 1)
-            {
-                return;
-            }
             
             //Reset();
             /* Follow Logic */
@@ -99,6 +95,11 @@ public class NPCMovementHandler
                 return;
             }
 
+            if (!IsInDiagonalBlock(_npc.Location, _npc.Follow.Location) && Math.Abs(_npc.Location.X - _npc.Follow.Location.X) <= 1 && Math.Abs(_npc.Location.Y - _npc.Follow.Location.Y) <= 1)
+            {
+                return;
+            }
+            
             int deltaX = _npc.Follow.Location.X - _npc.Location.X;
             int deltaY = _npc.Follow.Location.Y - _npc.Location.Y;
 
