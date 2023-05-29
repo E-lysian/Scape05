@@ -18,8 +18,8 @@ public class SpawnGroundItemPacketCommand : IPacketCommand
     public void Execute(Player player)
     {
         player.Writer.CreateFrame(ServerOpCodes.PLAYER_LOCATION);
-        player.Writer.WriteByteC(((player.Location.Y >> 3) << 3) - player.BuildArea.OffsetChunkY * 8);
-        player.Writer.WriteByteC(((player.Location.X >> 3) << 3) - player.BuildArea.OffsetChunkX * 8);
+        player.Writer.WriteByteC(((_spawnLocation.Y >> 3) << 3) - player.BuildArea.OffsetChunkY * 8);
+        player.Writer.WriteByteC(((_spawnLocation.X >> 3) << 3) - player.BuildArea.OffsetChunkX * 8);
         
         player.Writer.CreateFrame(ServerOpCodes.FLOORITEM_ADD);
         player.Writer.WriteWordBigEndianA(1042);

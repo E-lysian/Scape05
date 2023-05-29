@@ -41,12 +41,6 @@ public class Server
             // entity.CombatBase.DamageTaken = null;
             if (entity.Health <= 0)
             {
-                if (entity.CombatBase.Target != null)
-                {
-                    entity.CombatBase.Target.CombatBase.Target = null;
-                    entity.CombatBase.Target = null;
-                }
-
                 entity.PerformAnimation(836);
                 entity.DelayedTaskHandler.RegisterDelayedTask(new BattleEndDelayedTask(entity));
                 /* Register respawn as a delayed tick task */

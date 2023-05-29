@@ -15,6 +15,8 @@ public class BattleEndDelayedTask : IDelayedTask
 
         Console.WriteLine($"+ Tick Registered: {nameof(BattleEndDelayedTask)} with a delay of {Delay} ticks.");
 
+        
+        
         switch (entity)
         {
             case Player player:
@@ -30,10 +32,14 @@ public class BattleEndDelayedTask : IDelayedTask
                 if (npc.Dead)
                     return;
 
+                var target = new Player();
+                target = (Player)npc.CombatBase.Target;
+                
                 Delay = 3;
                 DelayedTask = () =>
                 {
                     ConsoleColorHelper.Broadcast(1, $"+ {nameof(BattleEndDelayedTask)} invoked.");
+                    PacketBuilder.SendGroundItemPacket(npc.Location, 531, 1, target);
                     npc.Dead = true;
                     npc.DelayedTaskHandler.RegisterDelayedTask(new SpawnNPCDelayedTask(8, npc));
                 };
@@ -41,6 +47,12 @@ public class BattleEndDelayedTask : IDelayedTask
             default:
                 ConsoleColorHelper.Broadcast(0, "what the heck");
                 break;
+        }
+        
+        if (_entity.CombatBase.Target != null)
+        {
+            _entity.CombatBase.Target.CombatBase.Target = null;
+            _entity.CombatBase.Target = null;
         }
     }
 
@@ -55,7 +67,11 @@ public class SpawnNPCDelayedTask : IDelayedTask
     public SpawnNPCDelayedTask(int delay, NPC npc)
     {
         Delay = delay;
-        DelayedTask = () => { npc.Dead = false; ConsoleColorHelper.Broadcast(2, $"[{npc.Index}] {npc.Name} has respawned."); };
+        DelayedTask = () =>
+        {
+            npc.Dead = false;
+            ConsoleColorHelper.Broadcast(2, $"[{npc.Index}] {npc.Name} has respawned.");
+        };
     }
 
     public Action DelayedTask { get; set; }

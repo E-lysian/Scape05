@@ -67,7 +67,6 @@ public class MeleeCombat : ICombatBase
                 }
             }
 
-            Attacker.CombatBase.Tick++;
         }
         else
         {
@@ -76,6 +75,7 @@ public class MeleeCombat : ICombatBase
                 PacketBuilder.SendMessage("Can't attack from here..", (Player)Attacker);
             }
         }
+            Attacker.CombatBase.Tick++;
     }
 
     private bool CanMeleeAttack()
