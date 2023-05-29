@@ -6,6 +6,7 @@ namespace Scape05.Entities;
 
 public class NPC : IEntity
 {
+    public int GraphicsId { get; set; }
     public int Index { get; set; }
     public string Name { get; set; }
     public int ModelId { get; set; }
@@ -50,7 +51,7 @@ public class NPC : IEntity
         CombatBase.Target = attacker;
         CombatBase.Tick = 2;
         NPC npc = (NPC)CombatBase.Attacker;
-
+        npc.Follow = attacker;
         npc.Flags |= NPCUpdateFlags.InteractingEntity;
         npc.InteractingEntityId = attacker.Index + 32768;
     }
@@ -70,6 +71,7 @@ public class NPC : IEntity
     public Face Face { get; set; }
     public IEntity Follow { get; set; } = null;
     public int InteractingEntityId { get; set; } = 0x00FFFF;
+    public bool Dead { get; set; }
 
     public NPC()
     {

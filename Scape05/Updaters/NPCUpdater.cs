@@ -39,17 +39,21 @@ public class NPCUpdater
 
             foreach (var npc in client.LocalNpcs.ToList())
             {
-                if (Server.NPCs[npc.Index] != null && player.Location.IsWithinArea(npc.Location) && !npc.NeedsPlacement)
+                if (npc == null)
+                {
+                    continue;
+                }
+
+                if (Server.NPCs[npc.Index] != null && player.Location.IsWithinArea(npc.Location) && !npc.NeedsPlacement && !npc.Dead)
                 {
                     UpdateMovement(npc, client.Writer);
-
-                    // npc.CombatManager.Attack();
 
                     if (npc.IsUpdateRequired)
                         AppendUpdates(npc, updateBlock);
                 }
                 else
                 {
+                    Console.WriteLine($"Removed: {npc.Name}");
                     client.LocalNpcs.Remove(npc);
                     client.Writer.WriteBits(1, 1);
                     client.Writer.WriteBits(2, 3);
@@ -61,12 +65,14 @@ public class NPCUpdater
                 if (client.LocalNpcs.Count >= 255)
                     break;
 
-                if (npc == null || client.LocalNpcs.Contains(npc))
+                if (npc == null) continue;
+                
+                if (client.LocalNpcs.Contains(npc))
                     continue;
 
-                if (npc.Location.IsWithinArea(player.Location))
+                if (npc.Location.IsWithinArea(player.Location) && !npc.Dead)
                 {
-                    client.LocalNpcs.AddLast(npc);
+                    client.LocalNpcs.Add(npc);
                     npc.Flags |= NPCUpdateFlags.Face;
                     npc.IsUpdateRequired = true;
 
@@ -75,6 +81,7 @@ public class NPCUpdater
                 }
                 else
                 {
+                    Console.WriteLine($"Removed: {npc.Name}");
                     client.LocalNpcs.Remove(npc);
                 }
             }
@@ -122,6 +129,10 @@ public class NPCUpdater
             mask |= NPCUpdateFlags.Animation;
         }
 
+        if (npc.Flags.HasFlag(NPCUpdateFlags.Graphics))
+        {
+            mask |= NPCUpdateFlags.Graphics;
+        }
 
         if (npc.Flags.HasFlag(NPCUpdateFlags.SingleHit))
         {
@@ -146,6 +157,11 @@ public class NPCUpdater
             updateBlock.WriteByte(0); //delay
         }
 
+        if ((mask & NPCUpdateFlags.Graphics) != 0)
+        {
+            updateBlock.WriteWordBigEndian(npc.GraphicsId);
+            updateBlock.WriteDWord(4);
+        }
 
         if ((mask & NPCUpdateFlags.SingleHit) != 0)
         {

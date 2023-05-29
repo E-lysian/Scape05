@@ -29,9 +29,9 @@ public class Server
             if (npc == null) continue;
             npc.MovementHandler.Process();
         }
-        
+
         FlushClients();
-        
+
         ResetPlayers();
         ResetNPCs();
 
@@ -53,7 +53,13 @@ public class Server
             }
         }
 
-        foreach (var entity in Players.Concat<IEntity>(NPCs))
+        foreach (var entity in Players)
+        {
+            if (entity == null) continue;
+            entity.DelayedTaskHandler.HandleDelayedTasks();
+        }
+
+        foreach (var entity in NPCs)
         {
             if (entity == null) continue;
             entity.DelayedTaskHandler.HandleDelayedTasks();

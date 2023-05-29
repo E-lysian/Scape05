@@ -16,8 +16,8 @@ public class Player : Client, IEntity
 
     /* Extract these? */
     public int CombatLevel { get; set; } = 3;
-    public int MaxHealth { get; set; } = 15;
-    public int Health { get; set; } = 15;
+    public int MaxHealth { get; set; } = 99;
+    public int Health { get; set; } = 99;
     public ICombatManager CombatManager { get; set; }
     public int AnimationId { get; set; } = -1;
     public IEntity Follow { get; set; }
@@ -97,9 +97,9 @@ public class Player : Client, IEntity
         CombatBase.Target = attacker;
         CombatBase.Tick -= 1;
         
-        Player npc = (Player)CombatBase.Attacker;
-        npc.Flags |= PlayerUpdateFlags.InteractingEntity;
-        npc.InteractingEntityId = attacker.Index;
+        Player player = (Player)CombatBase.Attacker;
+        player.Flags |= PlayerUpdateFlags.InteractingEntity;
+        player.InteractingEntityId = attacker.Index;
     }
 
     public void PerformAnimation(int animId)

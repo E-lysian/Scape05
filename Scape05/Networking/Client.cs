@@ -1,5 +1,6 @@
 using System.Net.Sockets;
 using Scape05.IO;
+using Scape05.Misc;
 
 namespace Scape05.Entities;
 
@@ -11,7 +12,7 @@ public class Client
     public TcpClient Socket { get; set; }
     public NetworkStream NetworkStream { get; set; }
     public LinkedList<Player> LocalPlayers { get; set; } = new();
-    public LinkedList<NPC> LocalNpcs { get; set; } = new();
+    public List<NPC> LocalNpcs { get; set; } = new List<NPC>();
     public SessionEncryption InEncryption { get; set; }
     public SessionEncryption OutEncryption { get; set; }
 

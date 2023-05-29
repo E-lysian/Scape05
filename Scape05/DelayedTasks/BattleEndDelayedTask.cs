@@ -10,39 +10,53 @@ public class BattleEndDelayedTask : IDelayedTask
 
     public BattleEndDelayedTask(IEntity entity)
     {
-        Console.WriteLine($"+ Tick Registered: {nameof(BattleEndDelayedTask)} with a delay of {Delay} ticks.");
         _entity = entity;
         _entity.Health = entity.MaxHealth;
-        
-        
+
+        Console.WriteLine($"+ Tick Registered: {nameof(BattleEndDelayedTask)} with a delay of {Delay} ticks.");
+
         switch (entity)
         {
             case Player player:
                 DelayedTask = () =>
                 {
                     ConsoleColorHelper.Broadcast(1, $"+ {nameof(BattleEndDelayedTask)} invoked.");
-                    ConsoleColorHelper.Broadcast(1, $"+ Entity: {_entity.Name} has respawned.");
                     PacketBuilder.Respawn(player);
                     /* No longer in combat */
                     /* Reset animation */
                 };
                 break;
             case NPC npc:
+                if (npc.Dead)
+                    return;
+
+                Delay = 3;
                 DelayedTask = () =>
                 {
                     ConsoleColorHelper.Broadcast(1, $"+ {nameof(BattleEndDelayedTask)} invoked.");
-                    ConsoleColorHelper.Broadcast(1, $"+ Entity: {_entity.Name} has respawned.");
+                    npc.Dead = true;
+                    npc.DelayedTaskHandler.RegisterDelayedTask(new SpawnNPCDelayedTask(8, npc));
                 };
                 break;
             default:
                 ConsoleColorHelper.Broadcast(0, "what the heck");
                 break;
         }
-
-        
-        
     }
 
     public int Delay { get; set; } = 3;
+    public Action DelayedTask { get; set; }
+}
+
+public class SpawnNPCDelayedTask : IDelayedTask
+{
+    public int Delay { get; set; }
+
+    public SpawnNPCDelayedTask(int delay, NPC npc)
+    {
+        Delay = delay;
+        DelayedTask = () => { npc.Dead = false; ConsoleColorHelper.Broadcast(2, $"[{npc.Index}] {npc.Name} has respawned."); };
+    }
+
     public Action DelayedTask { get; set; }
 }
