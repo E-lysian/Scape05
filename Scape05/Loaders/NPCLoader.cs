@@ -63,21 +63,6 @@ public class NPCLoader
         Server.AddNPC(npc);
     }
 
-    // private static NPC CreateNewNPC(FinalNPC npcData, NpcDefinition npcDef)
-    // {
-    //     var newNpc = new NPC
-    //     {
-    //         Location = new Location(npcData.Spawn.X, npcData.Spawn.Y),
-    //         ModelId = npcData.ModelId,
-    //         CanWalk = npcData.Walk == 1,
-    //         Size = npcDef.Size == 0 ? 1 : npcDef.Size,
-    //         Name = npcDef.Name
-    //     };
-    //     newNpc.BuildArea = new BuildArea(newNpc);
-    //     return newNpc;
-    // }
-    //
-
     private static void SetFaceBasedOnWalk(NPC npc, int walkValue)
     {
         switch (walkValue)
