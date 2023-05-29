@@ -19,7 +19,11 @@ public class MeleeCombat : ICombatBase
     {
         if (Target == null || Attacker == null)
             return;
-        Console.WriteLine($"CombatTick: {Tick}");
+        Console.WriteLine($"{Attacker.Name} - CombatTick: {Tick}");
+        if (Attacker.Name == "Man")
+        {
+            Console.WriteLine();
+        }
 
         var canMove = Region.canMove(Attacker.Location.X, Attacker.Location.Y, Target.Location.X, Target.Location.Y, 0, 1, 1);
         if (!canMove)
@@ -29,8 +33,6 @@ public class MeleeCombat : ICombatBase
         
         if (CanMeleeAttack())
         {
-            
-
             if (Attacker is Player)
             {
                 PacketBuilder.SendMessage("Can attack from here!", (Player)Attacker);

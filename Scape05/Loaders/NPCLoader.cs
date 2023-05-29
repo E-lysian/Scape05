@@ -55,6 +55,8 @@ public class NPCLoader
             Weapon = new Weapon(-1, -1, npcDef.AttackSpeed,
                 new CombatAnimations(npcDef.AttackAnim, npcDef.DefenceAnim, -1, npcDef.DeathAnim), WeaponType.HAND)
         };
+
+        npc.CombatBase.WeaponSpeed = npcDef.AttackSpeed;
         
         SetFaceBasedOnWalk(npc, npcSpawn.Walk);
 

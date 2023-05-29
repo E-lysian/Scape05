@@ -60,8 +60,10 @@ public class Player : Client, IEntity
         var Edgeville = new Location(3093, 3493);
         var Tree = new Location(3234, 3229);
         var VWestBank = new Location(3183, 3440);
+        var BarbarianVillage = new Location(3085,3420);
+        var HillGiants = new Location(3117, 9857);
         
-        Location = VWestBank;
+        Location = HillGiants;
         BuildArea = new BuildArea(this);
 
         InitializePlayerColors();

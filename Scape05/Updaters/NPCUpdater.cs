@@ -72,7 +72,7 @@ public class NPCUpdater
 
                 if (npc.Location.IsWithinArea(player.Location) && !npc.Dead)
                 {
-                    Console.WriteLine($"Added: {npc.ModelId}.");
+                    // Console.WriteLine($"Added: {npc.ModelId}.");
                     client.LocalNpcs.Add(npc);
                     npc.Flags |= NPCUpdateFlags.Face;
                     npc.IsUpdateRequired = true;
