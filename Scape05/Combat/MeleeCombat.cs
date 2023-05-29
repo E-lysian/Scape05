@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using Scape05.Entities;
+﻿using Scape05.Entities;
 using Scape05.Entities.Packets;
 using Scape05.Misc;
 using Scape05.World;

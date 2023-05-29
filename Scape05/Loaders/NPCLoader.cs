@@ -1,7 +1,7 @@
-﻿using System.IO.Pipes;
-using System.Reflection;
+﻿using System.Reflection.Metadata.Ecma335;
 using Newtonsoft.Json;
-using Scape05.Data.Npc;
+using Scape05.Engine.Combat;
+using Scape05.Engine.Data.Models;
 using Scape05.Entities;
 using Scape05.Misc;
 
@@ -9,43 +9,72 @@ namespace Scape05.Engine.Loaders;
 
 public class NPCLoader
 {
+    public static List<NPCDefinition> npcs = new();
     public static void Load()
     {
-        var json = File.ReadAllText("../../../Data/FinalNPC.json");
-        var spawns = JsonConvert.DeserializeObject<List<FinalNPC>>(json).OrderBy(o => o.ModelId).ToList();
-        var loadedNpcs = new List<FinalNPC>();
+        var npcDefs = File.ReadAllText("../../../Data/NPCDefinitions.json");
+        var npcSpawns = File.ReadAllText("../../../Data/NPCSpawns.json");
+        
+        npcs = JsonConvert.DeserializeObject<List<NPCDefinition>>(npcDefs).OrderBy(o => o.Id).ToList();
+        var NPCs = JsonConvert.DeserializeObject<List<NPCSpawn>>(npcSpawns).OrderBy(o => o.Id).ToList();
 
-        foreach (var npc in spawns)
+        foreach (var npc in NPCs)
         {
-            if (DateTime.Parse(npc.ReleaseDate) > DateTime.Parse("2005-06-18"))
-                continue;
-
-            loadedNpcs.Add(npc);
-
-            NpcDefinitionDecoder.NpcDefinitions.TryGetValue(npc.ModelId, out var npcDef);
-            if (npcDef != null)
-            {
-                var newNpc = CreateNewNPC(npc, npcDef);
-                SetFaceBasedOnWalk(newNpc, npc.Walk);
-
-                Server.AddNPC(newNpc);
-            }
+            LoadNewNPC(npc);
         }
     }
 
-    private static NPC CreateNewNPC(FinalNPC npcData, NpcDefinition npcDef)
+    private static void LoadNewNPC(NPCSpawn npcSpawn)
     {
-        var newNpc = new NPC
+        var npcDef = npcs.FirstOrDefault(x => x.Id == npcSpawn.Id);
+        if (npcDef == null) return;
+
+        if (npcDef.Name == null)
         {
-            Location = new Location(npcData.Spawn.X, npcData.Spawn.Y),
-            ModelId = npcData.ModelId,
-            CanWalk = npcData.Walk == 1,
-            Size = npcDef.Size == 0 ? 1 : npcDef.Size,
-            Name = npcDef.Name
+            return;
+        }
+        
+        var npc = new NPC
+        {
+            ModelId = npcDef.Id,
+            Name = npcDef.Name,
+            CombatLevel = npcDef.Combat,
+            MaxHealth = npcDef.Hitpoints,
+            Location = new Location(npcSpawn.X, npcSpawn.Y),
+            CanWalk = npcSpawn.Walk == 1,
+            Size = npcDef.Size,
+            NeedsPlacement = true,
+            Dead = false,
+            Health = npcDef.Hitpoints == 0 ? 1 : npcDef.Hitpoints
         };
-        newNpc.BuildArea = new BuildArea(newNpc);
-        return newNpc;
+        
+        npc.BuildArea = new BuildArea(npc);
+        
+        npc.CombatManager = new MeleeCombatHandler(npc)
+        {
+            Weapon = new Weapon(-1, -1, npcDef.AttackSpeed,
+                new CombatAnimations(npcDef.AttackAnim, npcDef.DefenceAnim, -1, npcDef.DeathAnim), WeaponType.HAND)
+        };
+        
+        SetFaceBasedOnWalk(npc, npcSpawn.Walk);
+
+        Server.AddNPC(npc);
     }
+
+    // private static NPC CreateNewNPC(FinalNPC npcData, NpcDefinition npcDef)
+    // {
+    //     var newNpc = new NPC
+    //     {
+    //         Location = new Location(npcData.Spawn.X, npcData.Spawn.Y),
+    //         ModelId = npcData.ModelId,
+    //         CanWalk = npcData.Walk == 1,
+    //         Size = npcDef.Size == 0 ? 1 : npcDef.Size,
+    //         Name = npcDef.Name
+    //     };
+    //     newNpc.BuildArea = new BuildArea(newNpc);
+    //     return newNpc;
+    // }
+    //
 
     private static void SetFaceBasedOnWalk(NPC npc, int walkValue)
     {
@@ -72,22 +101,4 @@ public class NPCLoader
                 break;
         }
     }
-}
-public class FinalNPC
-{
-    public int ModelId { get; set; }
-    public string Name { get; set; }
-    public string ReleaseDate { get; set; }
-    public Pos Spawn { get; set; }
-    public int Walk { get; set; }
-    public int MaxHit { get; set; }
-    public int Attack { get; set; }
-    public int Strength { get; set; }
-}
-
-public class Pos
-{
-    public int X { get; set; }
-    public int Y { get; set; }
-    public int Height { get; set; }
 }

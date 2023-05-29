@@ -4,6 +4,7 @@ using Scape05.Data.Items;
 using Scape05.Data.Npc;
 using Scape05.Data.ObjectsDef;
 using Scape05.Engine;
+using Scape05.Engine.Loaders;
 using Scape05.Misc;
 
 void ParseCache(IndexedFileSystem ifs)
@@ -23,7 +24,7 @@ var ifs = new IndexedFileSystem("../../../Data/cache", true);
 
 Benchmarker.MeasureTime(() => ParseCache(ifs), "Parsing cache");
 Benchmarker.MeasureTime(() => LoadRegionFactory(ifs), "Loading regions");
-//Benchmarker.MeasureTime(NPCLoader.Load, "Loading NPCs");
+Benchmarker.MeasureTime(() => NPCLoader.Load(), "Loading npcs");
 
 GameEngine engine = new GameEngine();
 engine.Start();

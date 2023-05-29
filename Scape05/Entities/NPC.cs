@@ -77,12 +77,7 @@ public class NPC : IEntity
     {
         MovementHandler = new NPCMovementHandler(this);
         CombatManager = new MeleeCombatHandler(this);
-        CombatManager.Weapon = new(4151, 1, 5, new CombatAnimations(422, 404, 1111), WeaponType.SWORD); //422, 404
-
-        CombatBase = new MeleeCombat
-        {
-            WeaponSpeed = 6
-        };
+        CombatBase = new MeleeCombat();
     }
 
     public void Reset()

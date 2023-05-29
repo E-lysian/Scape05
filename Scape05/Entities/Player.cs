@@ -42,7 +42,7 @@ public class Player : Client, IEntity
         MovementHandler = new MovementHandler(this);
         PacketHandler = new PacketHandler(this);
         CombatManager = new MeleeCombatHandler(this);
-        CombatManager.Weapon = new(4151, 1, 4, new CombatAnimations(1658, 1659, 1111), WeaponType.SWORD);
+        CombatManager.Weapon = new(4151, 1, 4, new CombatAnimations(1658, 1659, 1111, 836), WeaponType.SWORD);
 
         CombatBase  = new MeleeCombat
         {

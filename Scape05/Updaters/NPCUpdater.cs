@@ -53,7 +53,7 @@ public class NPCUpdater
                 }
                 else
                 {
-                    Console.WriteLine($"Removed: {npc.Name}");
+                    //Console.WriteLine($"Removed: {npc.Name}");
                     client.LocalNpcs.Remove(npc);
                     client.Writer.WriteBits(1, 1);
                     client.Writer.WriteBits(2, 3);
@@ -72,6 +72,7 @@ public class NPCUpdater
 
                 if (npc.Location.IsWithinArea(player.Location) && !npc.Dead)
                 {
+                    Console.WriteLine($"Added: {npc.ModelId}.");
                     client.LocalNpcs.Add(npc);
                     npc.Flags |= NPCUpdateFlags.Face;
                     npc.IsUpdateRequired = true;
@@ -81,7 +82,7 @@ public class NPCUpdater
                 }
                 else
                 {
-                    Console.WriteLine($"Removed: {npc.Name}");
+                    //Console.WriteLine($"Removed: {npc.Name}");
                     client.LocalNpcs.Remove(npc);
                 }
             }
