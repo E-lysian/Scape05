@@ -75,10 +75,10 @@ public class NPCMovementHandler
             if (Location.IsSame(_npc.Location, _npc.Follow.Location))
             {
                 var tiles = new List<Location>();
-                foreach (Location tile in _npc.Follow.Location.GetOuterTiles(1))
+                foreach (Location tile in _npc.Follow.Location.GetOuterTiles(_npc.Size))
                 {
                     /* Check if tile is valid */
-                    if (!Region.canMove(_npc.Location.X, _npc.Location.Y, tile.X, tile.Y, 0, 1, 1))
+                    if (!Region.canMove(_npc.Location.X, _npc.Location.Y, tile.X, tile.Y, 0, _npc.Size, _npc.Size))
                         continue;
 
                     tiles.Add(tile);
@@ -95,7 +95,7 @@ public class NPCMovementHandler
                 return;
             }
 
-            if (!IsInDiagonalBlock(_npc.Location, _npc.Follow.Location) && Math.Abs(_npc.Location.X - _npc.Follow.Location.X) <= 1 && Math.Abs(_npc.Location.Y - _npc.Follow.Location.Y) <= 1)
+            if (!IsInDiagonalBlock(_npc.Location, _npc.Follow.Location) && Math.Abs(_npc.Location.X - _npc.Follow.Location.X) <= _npc.Size && Math.Abs(_npc.Location.Y - _npc.Follow.Location.Y) <= _npc.Size)
             {
                 return;
             }
@@ -128,21 +128,21 @@ public class NPCMovementHandler
             var startY = _npc.Location.Y;
 
             var none = new Location(startX, startY);
-            var west = new Location(startX - 1, startY);
-            var east = new Location(startX + 1, startY);
-            var south = new Location(startX, startY - 1);
-            var north = new Location(startX, startY + 1);
+            var west = new Location(startX - _npc.Size, startY);
+            var east = new Location(startX + _npc.Size, startY);
+            var south = new Location(startX, startY - _npc.Size);
+            var north = new Location(startX, startY + _npc.Size);
 
             var direction = none;
 
             switch (directionId)
             {
                 case 0: /* North West */
-                    if (Region.canMove(startX, startY, west.X, west.Y, 0, 1, 1))
+                    if (Region.canMove(startX, startY, west.X, west.Y, 0, _npc.Size, _npc.Size))
                     {
                         direction = west;
                     }
-                    else if (Region.canMove(startX, startY, north.X, north.Y, 0, 1, 1))
+                    else if (Region.canMove(startX, startY, north.X, north.Y, 0, _npc.Size, _npc.Size))
                     {
                         direction = north;
                     }
@@ -153,11 +153,11 @@ public class NPCMovementHandler
 
                     break;
                 case 2: /* North East*/
-                    if (Region.canMove(startX, startY, north.X, north.Y, 0, 1, 1))
+                    if (Region.canMove(startX, startY, north.X, north.Y, 0, _npc.Size, _npc.Size))
                     {
                         direction = north;
                     }
-                    else if (Region.canMove(startX, startY, east.X, east.Y, 0, 1, 1))
+                    else if (Region.canMove(startX, startY, east.X, east.Y, 0, _npc.Size, _npc.Size))
                     {
                         direction = east;
                     }
@@ -168,11 +168,11 @@ public class NPCMovementHandler
 
                     break;
                 case 5: /* South West */
-                    if (Region.canMove(startX, startY, west.X, west.Y, 0, 1, 1))
+                    if (Region.canMove(startX, startY, west.X, west.Y, 0, _npc.Size, _npc.Size))
                     {
                         direction = west;
                     }
-                    else if (Region.canMove(startX, startY, south.X, south.Y, 0, 1, 1))
+                    else if (Region.canMove(startX, startY, south.X, south.Y, 0, _npc.Size, _npc.Size))
                     {
                         direction = south;
                     }
@@ -183,11 +183,11 @@ public class NPCMovementHandler
 
                     break;
                 case 7: /* South East*/
-                    if (Region.canMove(startX, startY, east.X, east.Y, 0, 1, 1))
+                    if (Region.canMove(startX, startY, east.X, east.Y, 0, _npc.Size, _npc.Size))
                     {
                         direction = east;
                     }
-                    else if (Region.canMove(startX, startY, south.X, south.Y, 0, 1, 1))
+                    else if (Region.canMove(startX, startY, south.X, south.Y, 0, _npc.Size, _npc.Size))
                     {
                         direction = south;
                     }
@@ -225,7 +225,7 @@ public class NPCMovementHandler
 
             var next = new Location(direction.X, direction.Y);
             Console.WriteLine($"NextX: {next.X} - NextY: {next.Y}");
-            if (Region.canMove(startX, startY, next.X, next.Y, 0, 1, 1))
+            if (Region.canMove(startX, startY, next.X, next.Y, 0, _npc.Size, _npc.Size))
             {
                 AddToPath(next);
                 Finish();
