@@ -36,6 +36,9 @@ public class PlayerCommandPacket : IPacket
             case "focus":
                 FocusPlayer();
                 break;
+            case "spawn":
+                SpawnItem();
+                break;
             case "pos":
                 PacketBuilder.SendMessage($"X: {player.Location.X} - Y: {player.Location.Y}", player);
                 PacketBuilder.SendMessage(
@@ -51,6 +54,24 @@ public class PlayerCommandPacket : IPacket
             default:
                 PacketBuilder.SendMessage($"Unknown command: '{_commandArgs[0]}'", player);
                 break;
+        }
+    }
+
+    private void SpawnItem()
+    {
+        var px = int.TryParse(_commandArgs[1], out int x);
+        var py = int.TryParse(_commandArgs[2], out int y);
+        var pz = int.TryParse(_commandArgs[3], out int z);
+
+        if (px && py && pz)
+        {
+            var spawnLocation = new Location(x, y);
+            spawnLocation.Height = z;
+            PacketBuilder.SendGroundItemPacket(spawnLocation, 1042, 1, _player);
+        }
+        else
+        {
+            PacketBuilder.SendMessage($"Invalid command syntax! ::spawn [{typeof(UInt16)}] [{typeof(UInt16)}] [{typeof(UInt16)}]", _player);
         }
     }
 

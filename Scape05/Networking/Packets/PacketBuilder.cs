@@ -7,7 +7,7 @@ public static class PacketBuilder
 {
     public static void SendGroundItemPacket(Location location, int itemId, int amount, Player player)
     {
-        SpawnGroundItemPacketCommand packetCommand = SpawnGroundItemPacketCommand.Create(itemId, amount);
+        SpawnGroundItemPacketCommand packetCommand = SpawnGroundItemPacketCommand.Create(itemId, amount, location);
         packetCommand.Execute(player);
     }
 
