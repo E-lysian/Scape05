@@ -53,4 +53,29 @@ public class Location
 
         return tiles;
     }
+    
+    public override bool Equals(object obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+            return false;
+        Location other = (Location)obj;
+        return X == other.X && Y == other.Y && Height == other.Height;
+    }
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(X, Y, Height);
+    }
+    public static bool operator ==(Location loc1, Location loc2)
+    {
+        if (ReferenceEquals(loc1, loc2))
+            return true;
+        if (ReferenceEquals(loc1, null) || ReferenceEquals(loc2, null))
+            return false;
+        return loc1.Equals(loc2);
+    }
+    public static bool operator !=(Location loc1, Location loc2)
+    {
+        return !(loc1 == loc2);
+    }
+    
 }

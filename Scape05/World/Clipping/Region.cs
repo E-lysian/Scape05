@@ -532,6 +532,22 @@ public class Region
         return (GetClipping(x, y - 1, z) & 0x1280102) != 0;
     }
 
+    public static bool BlockedNorthEast(int x, int y, int z) {
+        return (GetClipping(x + 1, y + 1, z) & 0x12801e0) != 0;
+    }
+    public static bool BlockedNorthWest(int x, int y, int z) {
+        return (GetClipping(x - 1, y + 1, z) & 0x1280138) != 0;
+    }
+    public static bool BlockedSouthEast(int x, int y, int z) {
+        return (GetClipping(x + 1, y - 1, z) & 0x1280183) != 0;
+    }
+    
+    public static bool BlockedSouthWest(int x, int y, int z)
+    {
+        return (GetClipping(x - 1, y - 1, z) & 0x128010e) != 0;
+    }
+
+
     public static bool ProjectileBlockedNorth(int x, int y, int z)
     {
         return (GetProjectileClipping(x, y + 1, z) & 0x1280120) != 0;

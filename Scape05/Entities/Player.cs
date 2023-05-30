@@ -62,8 +62,10 @@ public class Player : Client, IEntity
         var VWestBank = new Location(3183, 3440);
         var BarbarianVillage = new Location(3085,3420);
         var HillGiants = new Location(3117, 9857);
+        var HighwayMan = new Location(3010, 3278);
         
-        Location = HillGiants;
+        
+        Location = HighwayMan;
         BuildArea = new BuildArea(this);
 
         InitializePlayerColors();

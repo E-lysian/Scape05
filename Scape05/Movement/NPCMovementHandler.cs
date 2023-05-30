@@ -1,5 +1,6 @@
 ﻿using Scape05.Entities.Packets;
 using Scape05.World;
+using Scape05.World.Clipping;
 
 namespace Scape05.Entities;
 
@@ -53,7 +54,8 @@ public class NPCMovementHandler
         }
     }
 
-    public static bool IsInDiagonalBlock(Location attacker, Location attacked) {
+    public static bool IsInDiagonalBlock(Location attacker, Location attacked)
+    {
         return attacked.X - 1 == attacker.X && attacked.Y + 1 == attacker.Y
                || attacker.X - 1 == attacked.X && attacker.Y + 1 == attacked.Y
                || attacked.X + 1 == attacker.X && attacked.Y - 1 == attacker.Y
@@ -61,24 +63,47 @@ public class NPCMovementHandler
                || attacked.X + 1 == attacker.X && attacked.Y + 1 == attacker.Y
                || attacker.X + 1 == attacked.X && attacker.Y + 1 == attacked.Y;
     }
-    
+
+    public int GetMove(int Place1, int Place2)
+    {
+        if ((Place1 - Place2) == 0)
+        {
+            return 0;
+        }
+        else if ((Place1 - Place2) < 0)
+        {
+            return 1;
+        }
+        else if ((Place1 - Place2) > 0)
+        {
+            return -1;
+        }
+
+        return 0;
+    }
+
     private void ProcessFollow()
     {
-        
         if (_npc.Follow != null)
         {
+            var playerX = _npc.Follow.Location.X;
+            var playerY = _npc.Follow.Location.Y;
 
-            
-            //Reset();
-            /* Follow Logic */
-            /* If standing on the same tile, step away */
-            if (Location.IsSame(_npc.Location, _npc.Follow.Location))
+            var npcX = _npc.Location.X;
+            var npcY = _npc.Location.Y;
+
+            var diagonal = ((playerX == npcX - 1 && playerY == npcY + 1) ||
+                            (playerX == npcX - 1 && playerY == npcY - 1) ||
+                            (playerX == npcX + 1 && playerY == npcY - 1) ||
+                            (playerX == npcX + 1 && playerY == npcY + 1));
+
+            if (Location.IsSame(_npc.Location, _npc.Follow.Location) || diagonal)
             {
                 var tiles = new List<Location>();
-                foreach (Location tile in _npc.Follow.Location.GetOuterTiles(_npc.Size))
+                foreach (Location tile in _npc.Follow.Location.GetOuterTiles(1))
                 {
                     /* Check if tile is valid */
-                    if (!Region.canMove(_npc.Location.X, _npc.Location.Y, tile.X, tile.Y, 0, _npc.Size, _npc.Size))
+                    if (!Region.canMove(_npc.Location.X, _npc.Location.Y, tile.X, tile.Y, 0, 1, 1))
                         continue;
 
                     tiles.Add(tile);
@@ -95,141 +120,17 @@ public class NPCMovementHandler
                 return;
             }
 
-            if (!IsInDiagonalBlock(_npc.Location, _npc.Follow.Location) && Math.Abs(_npc.Location.X - _npc.Follow.Location.X) <= _npc.Size && Math.Abs(_npc.Location.Y - _npc.Follow.Location.Y) <= _npc.Size)
+
+            var next = NPCDumbPathFinder.Follow(_npc, _npc.Follow);
+
+            if (next != null)
             {
-                return;
-            }
-            
-            int deltaX = _npc.Follow.Location.X - _npc.Location.X;
-            int deltaY = _npc.Follow.Location.Y - _npc.Location.Y;
-
-            if (deltaX < -1)
-            {
-                deltaX = -1;
-            }
-            else if (deltaX > 1)
-            {
-                deltaX = 1;
-            }
-
-            if (deltaY < -1)
-            {
-                deltaY = -1;
-            }
-            else if (deltaY > 1)
-            {
-                deltaY = 1;
-            }
-
-            /* Diagonal */
-            int directionId = MovementHelper.DirectionFromDelta(deltaX, deltaY);
-
-            var startX = _npc.Location.X;
-            var startY = _npc.Location.Y;
-
-            var none = new Location(startX, startY);
-            var west = new Location(startX - _npc.Size, startY);
-            var east = new Location(startX + _npc.Size, startY);
-            var south = new Location(startX, startY - _npc.Size);
-            var north = new Location(startX, startY + _npc.Size);
-
-            var direction = none;
-
-            switch (directionId)
-            {
-                case 0: /* North West */
-                    if (Region.canMove(startX, startY, west.X, west.Y, 0, _npc.Size, _npc.Size))
-                    {
-                        direction = west;
-                    }
-                    else if (Region.canMove(startX, startY, north.X, north.Y, 0, _npc.Size, _npc.Size))
-                    {
-                        direction = north;
-                    }
-                    else
-                    {
-                        direction = none;
-                    }
-
-                    break;
-                case 2: /* North East*/
-                    if (Region.canMove(startX, startY, north.X, north.Y, 0, _npc.Size, _npc.Size))
-                    {
-                        direction = north;
-                    }
-                    else if (Region.canMove(startX, startY, east.X, east.Y, 0, _npc.Size, _npc.Size))
-                    {
-                        direction = east;
-                    }
-                    else
-                    {
-                        direction = none;
-                    }
-
-                    break;
-                case 5: /* South West */
-                    if (Region.canMove(startX, startY, west.X, west.Y, 0, _npc.Size, _npc.Size))
-                    {
-                        direction = west;
-                    }
-                    else if (Region.canMove(startX, startY, south.X, south.Y, 0, _npc.Size, _npc.Size))
-                    {
-                        direction = south;
-                    }
-                    else
-                    {
-                        direction = none;
-                    }
-
-                    break;
-                case 7: /* South East*/
-                    if (Region.canMove(startX, startY, east.X, east.Y, 0, _npc.Size, _npc.Size))
-                    {
-                        direction = east;
-                    }
-                    else if (Region.canMove(startX, startY, south.X, south.Y, 0, _npc.Size, _npc.Size))
-                    {
-                        direction = south;
-                    }
-                    else
-                    {
-                        direction = none;
-                    }
-
-                    break;
-                default:
-                    break;
-            }
-
-            if (direction == _npc.Location)
-            {
-                return;
-            }
-
-            if (directionId == 6) /* South */
-            {
-                direction.Y -= 1;
-            }
-            else if (directionId == 4) /* East */
-            {
-                direction.X += 1;
-            }
-            else if (directionId == 3) /* West */
-            {
-                direction.X -= 1;
-            }
-            else if (directionId == 1) /* North */
-            {
-                direction.Y += 1;
-            }
-
-            var next = new Location(direction.X, direction.Y);
-            Console.WriteLine($"NextX: {next.X} - NextY: {next.Y}");
-            if (Region.canMove(startX, startY, next.X, next.Y, 0, _npc.Size, _npc.Size))
-            {
-                AddToPath(next);
+                AddToPath(new Location(npcX + next.X, npcY + next.Y));
                 Finish();
             }
+            // if (Region.canMove(npcX, npcY, npcX  + next.X, npcY + next.Y, 0, _npc.Size, _npc.Size))
+            // {
+            // }
         }
     }
 
