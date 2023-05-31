@@ -97,8 +97,8 @@ public class NPCMovementHandler
                             (playerX == npcX + 1 && playerY == npcY - 1) ||
                             (playerX == npcX + 1 && playerY == npcY + 1));
 
-            
-            if (Location.IsSame(_npc.Location, _npc.Follow.Location) || diagonal)
+
+            if (Location.InnerTilesContains(_npc, _npc.Follow))
             {
                 var tiles = new List<Location>();
                 foreach (Location tile in _npc.Follow.Location.GetOuterTiles(1))

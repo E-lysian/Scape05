@@ -55,6 +55,7 @@ public class Player : Client, IEntity
         var FallyCrossroads = new Location(3008, 3278);
         var FallyBank = new Location(3006, 3354);
         var KBD = new Location(2717, 9808);
+        var KBD2 = new Location(2271, 4698);
         var Varrock = new Location(3214, 3424);
         var FallyNorthStatue = new Location(2973, 3412);
         var Edgeville = new Location(3093, 3493);

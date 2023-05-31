@@ -34,6 +34,22 @@ public class Location
         return l1.X == l2.X && l1.Y == l2.Y;
     }
 
+    public static bool InnerTilesContains(IEntity entity, IEntity followLocation)
+    {
+        var tiles = new List<Location>();
+        for (int x = entity.Location.X; x <  entity.Location.X + entity.Size; x++)
+        {
+            for (int y = entity.Location.Y; y <  entity.Location.Y + entity.Size; y++)
+            {
+                tiles.Add(new Location(x, y));
+            }
+        }
+
+        var contain = tiles.Where(x => x.X == followLocation.Location.X && x.Y == followLocation.Location.Y).FirstOrDefault();
+        
+        return contain != null;
+    }
+    
     public static List<Location> InnerTiles(IEntity entity)
     {
         var tiles = new List<Location>();
