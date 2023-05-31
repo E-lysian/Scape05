@@ -33,7 +33,21 @@ public class Location
     {
         return l1.X == l2.X && l1.Y == l2.Y;
     }
-    
+
+    public static List<Location> InnerTiles(IEntity entity)
+    {
+        var tiles = new List<Location>();
+        for (int x = entity.Location.X; x <= entity.Size; x++)
+        {
+            for (int y = entity.Location.Y; y <= entity.Size; y++)
+            {
+                tiles.Add(new Location(x, y));
+            }
+        }
+
+        return tiles;
+    }
+
     public Location[] GetOuterTiles(int size)
     {
         Location[] tiles = new Location[size * 4];
@@ -53,7 +67,7 @@ public class Location
 
         return tiles;
     }
-    
+
     public override bool Equals(object obj)
     {
         if (obj == null || GetType() != obj.GetType())
@@ -61,10 +75,12 @@ public class Location
         Location other = (Location)obj;
         return X == other.X && Y == other.Y && Height == other.Height;
     }
+
     public override int GetHashCode()
     {
         return HashCode.Combine(X, Y, Height);
     }
+
     public static bool operator ==(Location loc1, Location loc2)
     {
         if (ReferenceEquals(loc1, loc2))
@@ -73,9 +89,9 @@ public class Location
             return false;
         return loc1.Equals(loc2);
     }
+
     public static bool operator !=(Location loc1, Location loc2)
     {
         return !(loc1 == loc2);
     }
-    
 }

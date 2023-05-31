@@ -77,6 +77,10 @@ public class MeleeCombat : ICombatBase
             }
         }
             Attacker.CombatBase.Tick++;
+            if (Attacker.CombatBase.Tick > Attacker.CombatBase.WeaponSpeed)
+            {
+                Attacker.CombatBase.Tick = 0;
+            }
     }
 
     private bool CanMeleeAttack()

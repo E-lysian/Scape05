@@ -97,13 +97,14 @@ public class NPCMovementHandler
                             (playerX == npcX + 1 && playerY == npcY - 1) ||
                             (playerX == npcX + 1 && playerY == npcY + 1));
 
+            
             if (Location.IsSame(_npc.Location, _npc.Follow.Location) || diagonal)
             {
                 var tiles = new List<Location>();
                 foreach (Location tile in _npc.Follow.Location.GetOuterTiles(1))
                 {
                     /* Check if tile is valid */
-                    if (!Region.canMove(_npc.Location.X, _npc.Location.Y, tile.X, tile.Y, 0, 1, 1))
+                    if (!Region.canMove(_npc.Location.X, _npc.Location.Y, tile.X, tile.Y, 0, _npc.Size, _npc.Size))
                         continue;
 
                     tiles.Add(tile);
