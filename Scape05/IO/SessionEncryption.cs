@@ -150,6 +150,7 @@ public class SessionEncryption
             cryptArray[j + 5] = f;
             cryptArray[j + 6] = g;
             cryptArray[j + 7] = h;
+            
         }
 
         for (var k = 0; k < 256; k += 8)

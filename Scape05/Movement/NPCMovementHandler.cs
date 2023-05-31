@@ -96,8 +96,7 @@ public class NPCMovementHandler
                             (playerX == npcX - 1 && playerY == npcY - 1) ||
                             (playerX == npcX + 1 && playerY == npcY - 1) ||
                             (playerX == npcX + 1 && playerY == npcY + 1));
-
-
+            
             if (Location.InnerTilesContains(_npc, _npc.Follow))
             {
                 var tiles = new List<Location>();
@@ -120,7 +119,6 @@ public class NPCMovementHandler
 
                 return;
             }
-
 
             var next = NPCDumbPathFinder.Follow(_npc, _npc.Follow);
 

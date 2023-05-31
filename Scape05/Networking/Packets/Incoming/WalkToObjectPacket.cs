@@ -16,7 +16,6 @@ public class WalkToObjectPacket : IPacket
         /* Check if destX/Y contains an object or an NPC */
         /* If NPC, get the NPC wat that pos Server.NPCS.Where(x => x.Position == new Position(destX, destY))*/
         
-        
         var length = _player.PacketHandler.PacketLength;
         
         var _destX = -1;
@@ -24,7 +23,6 @@ public class WalkToObjectPacket : IPacket
         
         var steps = (length - 5) / 2;
         var path = new int[steps, 2];
-        
         
         var firstStepX = _player.Reader.ReadSignedWordBigEndianA();
         for (var i = 0; i < steps; i++)
@@ -65,7 +63,7 @@ public class WalkToObjectPacket : IPacket
         if (tiles != null)
         {
             for (var i = 0; i < tiles.Count; i++) player.MovementHandler.AddToPath(tiles[i]);
-        
+
             /* Remove the first waypoint, aka the tile we're standing on, otherwise it'll take an extra tick to start walking */
             player.MovementHandler.Finish();
         }

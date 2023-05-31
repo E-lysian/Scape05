@@ -30,6 +30,8 @@ public class MeleeCombat : ICombatBase
         {
             return;
         }
+
+        
         
         if (CanMeleeAttack())
         {
@@ -92,8 +94,9 @@ public class MeleeCombat : ICombatBase
 
         var delta = Location.Delta(Attacker.Location, Target.Location);
 
-        var t = Math.Abs(delta.X) == Math.Abs(delta.Y) && delta.X != 0 && delta.Y != 0;
+        // var t = Math.Abs(delta.X) == Math.Abs(delta.Y) && delta.X != 0 && delta.Y != 0;
 
+        var t = Location.InnerTilesContains(Attacker, Target);
 
         return horizontally && vertically & !t;
     }
