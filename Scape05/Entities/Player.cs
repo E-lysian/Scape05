@@ -16,8 +16,8 @@ public class Player : Client, IEntity
 
     /* Extract these? */
     public int CombatLevel { get; set; } = 3;
-    public int MaxHealth { get; set; } = 99;
-    public int Health { get; set; } = 99;
+    public int MaxHealth { get; set; } = 9999;
+    public int Health { get; set; } = 9999;
     public ICombatManager CombatManager { get; set; }
     public int AnimationId { get; set; } = -1;
     public IEntity Follow { get; set; }

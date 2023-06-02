@@ -106,22 +106,20 @@ public class NPCMovementHandler
                 /* W, N, E, S*/
                 int[,] directions = new int[,] { { -1, 0 }, { 0, 1 }, { 1, 0 }, { 0, -1 } };
 
-                //In order to be adjacent to the NPC perpendicularly,
-                //we need to be either -1 on the X,
-                //- 1 on the Y,
-                //+ Size on the X
-                //+ Size on the Y
-
                 //Check each direction it can move
                 //Get all the valid directions
                 //Get the one which has the furthest distance away from the player out of those
 
                 var distances = new Dictionary<Location, double>();
-                
+
                 for (int i = 0; i < directions.Length / 2; i++)
                 {
                     var canMove = Region.canMove(_npc.Location.X, _npc.Location.Y, _npc.Location.X + directions[i, 0],
                         _npc.Location.Y + directions[i, 1], 0, _npc.Size, _npc.Size);
+
+                    var canIt = Region.canMove(_npc.Location.X, _npc.Location.Y, _npc.Location.X,
+                        _npc.Location.Y + directions[i, 1], 0, _npc.Size, _npc.Size);
+                    Console.WriteLine($"[{i}] CanMove: {canMove} - {canIt}");
 
                     if (!canMove)
                         continue;
@@ -139,33 +137,19 @@ public class NPCMovementHandler
                     Console.WriteLine($"[{i}] Distance: {distance}");
 
                     distances.Add(newTile, distance);
-
                 }
 
                 var vals = distances.OrderByDescending(x => x.Value);
+
+                /* Get all the ones with the same value as the first one and select one at random */
                 if (vals.Count() > 0)
                 {
-                    var location = vals.FirstOrDefault().Key;
-                    AddToPath(location);
+                    var list = vals.TakeWhile(kv => kv.Value == vals.First().Value).Select(kv => kv.Key)
+                        .ToDictionary(x => x);
+                    var elem = list.ElementAt(new Random().Next(0, list.Count)).Key;
+                    AddToPath(elem);
                     Finish();
                 }
-                // var tiles = new List<Location>();
-                // foreach (Location tile in _npc.Follow.Location.GetOuterTiles(1))
-                // {
-                //     /* Check if tile is valid */
-                //     if (!Region.canMove(_npc.Location.X, _npc.Location.Y, tile.X, tile.Y, 0, _npc.Size, _npc.Size))
-                //         continue;
-                //
-                //     tiles.Add(tile);
-                // }
-                //
-                // if (tiles.Count > 0)
-                // {
-                //     Random random = new Random();
-                //     Location randomTile = tiles[random.Next(tiles.Count)];
-                //     AddToPath(randomTile);
-                //     Finish();
-                // }
 
                 return;
             }
@@ -193,12 +177,10 @@ public class NPCMovementHandler
             // Adjacent tiles
             return 1;
         }
-        else
-        {
-            // Diagonal tiles
-            double diagonalDistance = Math.Sqrt(Math.Pow(horizontalDistance, 2) + Math.Pow(verticalDistance, 2));
-            return diagonalDistance;
-        }
+
+        // Diagonal tiles
+        double diagonalDistance = Math.Sqrt(Math.Pow(horizontalDistance, 2) + Math.Pow(verticalDistance, 2));
+        return diagonalDistance;
     }
 
     private void MoveToDirection(int direction)
