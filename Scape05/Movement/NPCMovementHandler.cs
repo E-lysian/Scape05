@@ -1,4 +1,5 @@
-﻿using Scape05.Entities.Packets;
+﻿using System.Numerics;
+using Scape05.Entities.Packets;
 using Scape05.World;
 using Scape05.World.Clipping;
 
@@ -96,26 +97,75 @@ public class NPCMovementHandler
                             (playerX == npcX - 1 && playerY == npcY - 1) ||
                             (playerX == npcX + 1 && playerY == npcY - 1) ||
                             (playerX == npcX + 1 && playerY == npcY + 1));
-            
-            if (Location.InnerTilesContains(_npc, _npc.Follow))
+
+            /* Check if we're inside the NPC tiles */
+            if (Location.IsPlayerInsideNPC(_npc.Follow, _npc))
             {
-                var tiles = new List<Location>();
-                foreach (Location tile in _npc.Follow.Location.GetOuterTiles(1))
+                Console.WriteLine("Inside the NPC tiles");
+
+                /* W, N, E, S*/
+                int[,] directions = new int[,] { { -1, 0 }, { 0, 1 }, { 1, 0 }, { 0, -1 } };
+
+                //In order to be adjacent to the NPC perpendicularly,
+                //we need to be either -1 on the X,
+                //- 1 on the Y,
+                //+ Size on the X
+                //+ Size on the Y
+
+                //Check each direction it can move
+                //Get all the valid directions
+                //Get the one which has the furthest distance away from the player out of those
+
+                var distances = new Dictionary<Location, double>();
+                
+                for (int i = 0; i < directions.Length / 2; i++)
                 {
-                    /* Check if tile is valid */
-                    if (!Region.canMove(_npc.Location.X, _npc.Location.Y, tile.X, tile.Y, 0, _npc.Size, _npc.Size))
+                    var canMove = Region.canMove(_npc.Location.X, _npc.Location.Y, _npc.Location.X + directions[i, 0],
+                        _npc.Location.Y + directions[i, 1], 0, _npc.Size, _npc.Size);
+
+                    if (!canMove)
                         continue;
 
-                    tiles.Add(tile);
+                    double centerX = _npc.Location.X + directions[i, 0] + _npc.Size / 2 - .5;
+                    double centerY = _npc.Location.Y + directions[i, 1] + _npc.Size / 2 - .5;
+
+                    Location newTile = new Location(_npc.Location.X + directions[i, 0],
+                        _npc.Location.Y + directions[i, 1]);
+
+
+                    var distance = CalculateDistance(centerX, centerY,
+                        _npc.Follow.Location.X, _npc.Follow.Location.Y);
+
+                    Console.WriteLine($"[{i}] Distance: {distance}");
+
+                    distances.Add(newTile, distance);
+
                 }
 
-                if (tiles.Count > 0)
+                var vals = distances.OrderByDescending(x => x.Value);
+                if (vals.Count() > 0)
                 {
-                    Random random = new Random();
-                    Location randomTile = tiles[random.Next(tiles.Count)];
-                    AddToPath(randomTile);
+                    var location = vals.FirstOrDefault().Key;
+                    AddToPath(location);
                     Finish();
                 }
+                // var tiles = new List<Location>();
+                // foreach (Location tile in _npc.Follow.Location.GetOuterTiles(1))
+                // {
+                //     /* Check if tile is valid */
+                //     if (!Region.canMove(_npc.Location.X, _npc.Location.Y, tile.X, tile.Y, 0, _npc.Size, _npc.Size))
+                //         continue;
+                //
+                //     tiles.Add(tile);
+                // }
+                //
+                // if (tiles.Count > 0)
+                // {
+                //     Random random = new Random();
+                //     Location randomTile = tiles[random.Next(tiles.Count)];
+                //     AddToPath(randomTile);
+                //     Finish();
+                // }
 
                 return;
             }
@@ -130,6 +180,24 @@ public class NPCMovementHandler
             // if (Region.canMove(npcX, npcY, npcX  + next.X, npcY + next.Y, 0, _npc.Size, _npc.Size))
             // {
             // }
+        }
+    }
+
+    static double CalculateDistance(double x1, double y1, int x2, int y2)
+    {
+        double horizontalDistance = Math.Abs(x2 - x1);
+        double verticalDistance = Math.Abs(y2 - y1);
+
+        if (horizontalDistance == 0 || verticalDistance == 0)
+        {
+            // Adjacent tiles
+            return 1;
+        }
+        else
+        {
+            // Diagonal tiles
+            double diagonalDistance = Math.Sqrt(Math.Pow(horizontalDistance, 2) + Math.Pow(verticalDistance, 2));
+            return diagonalDistance;
         }
     }
 

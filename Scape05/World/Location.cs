@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace Scape05.Entities;
 
 public class Location
@@ -34,21 +36,19 @@ public class Location
         return l1.X == l2.X && l1.Y == l2.Y;
     }
 
-    public static bool InnerTilesContains(IEntity entity, IEntity followLocation)
+    public static bool IsPlayerInsideNPC(IEntity player, IEntity npc)
     {
-        var tiles = new List<Location>();
-        for (int x = entity.Location.X; x <  entity.Location.X + entity.Size; x++)
-        {
-            for (int y = entity.Location.Y; y <  entity.Location.Y + entity.Size; y++)
-            {
-                tiles.Add(new Location(x, y));
-            }
-        }
-
-        var contain = tiles.Where(x => x.X == followLocation.Location.X && x.Y == followLocation.Location.Y).FirstOrDefault();
-        
-        return contain != null;
+        var npcBottomLeft = npc.Location;
+        var npcSize = npc.Size;
+        var npcTopRight = new Location(npcBottomLeft.X + npcSize - 1, npcBottomLeft.Y + npcSize - 1);
+    
+        var playerLocation = player.Location;
+        var playerXInside = (playerLocation.X >= npcBottomLeft.X) & (playerLocation.X <= npcTopRight.X);
+        var playerYInside = (playerLocation.Y >= npcBottomLeft.Y) & (playerLocation.Y <= npcTopRight.Y);
+    
+        return playerXInside & playerYInside;
     }
+
     
     public static List<Location> InnerTiles(IEntity entity)
     {

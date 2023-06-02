@@ -21,7 +21,6 @@ public class MovementHandler
 
     public void Process()
     {
-        
         if (_client.CombatBase.Target != null)
         {
             PacketBuilder.SendMessage("Following..", _client);

@@ -32,7 +32,6 @@ public class MeleeCombat : ICombatBase
         }
 
         
-        
         if (CanMeleeAttack())
         {
             if (Attacker is Player)
@@ -96,7 +95,7 @@ public class MeleeCombat : ICombatBase
 
         // var t = Math.Abs(delta.X) == Math.Abs(delta.Y) && delta.X != 0 && delta.Y != 0;
 
-        var t = Location.InnerTilesContains(Attacker, Target);
+        var t = Location.IsPlayerInsideNPC(Target, Attacker);
 
         return horizontally && vertically & !t;
     }
