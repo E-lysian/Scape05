@@ -512,6 +512,12 @@ public class Region
         }
     }
 
+    
+    public static bool Blocked(int x, int y, int z)
+    {
+        return (GetClipping(x, y, z) & 0x1000000) != 0;
+    }
+    
     public static bool BlockedNorth(int x, int y, int z)
     {
         return (GetClipping(x, y + 1, z) & 0x1280120) != 0;

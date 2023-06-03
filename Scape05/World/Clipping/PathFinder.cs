@@ -69,7 +69,7 @@ public class PathFinder
                 break;
             }
 
-            if (player.CombatBase.Target != null)
+            if (player.InteractingEntityId != -1)
             {
                 /* Absolute magic, stops before the NPC at the closest tile :sob: */
                 if (xLength != 0 && yLength != 0 && Region.canInteract(destX, destY, curAbsX, curAbsY, curX, curY,
@@ -257,7 +257,7 @@ public class PathFinder
             tiles.Add(new Location(pathX, pathY));
         }
 
-        player.MovementHandler.Finish();
+        //player.MovementHandler.Finish();
 
         return tiles;
     }

@@ -95,9 +95,9 @@ public class NPCMovementHandler
             var npcY = _npc.Location.Y;
 
             var diagonal = ((playerX == npcX - 1 && playerY == npcY + 1) ||
-                            (playerX == npcX - 1 && playerY == npcY - 1) ||
-                            (playerX == npcX + 1 && playerY == npcY - 1) ||
-                            (playerX == npcX + 1 && playerY == npcY + 1));
+                                  (playerX == npcX - 1 && playerY == npcY - 1) ||
+                                  (playerX == npcX + 1 && playerY == npcY - 1) ||
+                                  (playerX == npcX + 1 && playerY == npcY + 1));
 
             if (_npc.Size == 1 && diagonal)
             {
@@ -109,7 +109,7 @@ public class NPCMovementHandler
                 var valid = new Dictionary<Location, double>();
                 foreach (var tile in tiles)
                 {
-                    if (Region.canMove(_npc.Location.X, _npc.Location.Y, tile.X,
+                    if (Region.canMove(_npc.Location.X, _npc.Location.Y, _npc.Location.X + tile.X,
                             tile.Y, 0, 1, 1))
                     {
                         var distance = CalculateDistance(tile.X, tile.Y, _npc.Location.X, _npc.Location.Y);

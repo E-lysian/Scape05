@@ -14,6 +14,7 @@ public class RegularWalkPacket : IPacket
         player.Flags |= PlayerUpdateFlags.InteractingEntity;
         player.InteractingEntityId = 0x00FFFF;
         player.IsUpdateRequired = true;
+        player.InteractingEntityId = -1;
         
         var _destX = -1;
         var _destY = -1;

@@ -2,6 +2,7 @@
 using Scape05.Entities;
 using Scape05.Entities.Packets;
 using Scape05.Misc;
+using Scape05.World;
 
 namespace Scape05.Networking.Packets.Incoming;
 
@@ -50,6 +51,10 @@ public class PlayerCommandPacket : IPacket
                 PacketBuilder.SendMessage(
                     $"LocalX: {player.BuildArea.GetPositionRelativeToOffsetChunkX()} - LocalY: {player.BuildArea.GetPositionRelativeToOffsetChunkY()}",
                     player);
+                
+                PacketBuilder.SendMessage($"Blocked: {Region.Blocked(_player.Location.X, _player.Location.Y, 0)}",
+                    player);
+                
                 break;
             default:
                 PacketBuilder.SendMessage($"Unknown command: '{_commandArgs[0]}'", player);

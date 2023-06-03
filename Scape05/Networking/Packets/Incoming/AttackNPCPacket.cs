@@ -1,4 +1,6 @@
 ﻿using Scape05.Misc;
+using Scape05.World;
+using Scape05.World.Clipping;
 
 namespace Scape05.Entities.Packets.Implementation;
 
@@ -27,10 +29,35 @@ public class AttackNPCPacket : IPacket
         player.InteractingEntityId = _target.Index;
         player.IsUpdateRequired = true;
 
+        
+         // if (player.InteractingEntityId != -1)
+         //{
+         //    /* Get the entity size */
+         //    /* Get the outer tiles */
+         //    /* Check which ones are valid */
+         //    /* Pathfind to each tile and select the one path that has the least amount of waypoints */
+         //    
+         //    var outerTiles = npc.Location.GetOuterTiles(npc.Size);
+         //    var dictionary = new List<List<Location>>();
+         //    foreach (var outerTile in outerTiles)
+         //    {
+         //        if (Region.canMove(player.Location.X, player.Location.Y, outerTile.X, outerTile.Y, 0, 1, 1))
+         //        {
+         //            var foundPath = PathFinder.getPathFinder().FindRoute(player, outerTile.X, outerTile.Y, true, 1, 1);
+         //            dictionary.Add(foundPath);
+         //        }
+         //    }
+         //}
+
+         //return;
+        
+         player.CombatBase.Attacker = player;
+         player.CombatBase.Target = npc;
+         
         if (!_attacker.CombatBase.InCombat)
         {
-            player.CombatBase.Attacker = player;
-            player.CombatBase.Target = npc;
+            // player.CombatBase.Attacker = player;
+            // player.CombatBase.Target = npc;
             player.CombatBase.NeedsToInitiate = true;
             // if (CanMeleeAttack())
             // {
