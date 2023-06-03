@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Numerics;
 using Scape05.Entities.Packets;
 using Scape05.World;
 using Scape05.World.Clipping;
@@ -97,6 +98,33 @@ public class NPCMovementHandler
                             (playerX == npcX - 1 && playerY == npcY - 1) ||
                             (playerX == npcX + 1 && playerY == npcY - 1) ||
                             (playerX == npcX + 1 && playerY == npcY + 1));
+
+            if (_npc.Size == 1 && diagonal)
+            {
+                Console.WriteLine("Diagonal");
+                /* Get valid tiles of the player */
+                /* Check which one is the closest to us (npc) */
+                /* Move to the first closest one */
+                var tiles = _npc.Follow.Location.GetOuterTiles(1);
+                var valid = new Dictionary<Location, double>();
+                foreach (var tile in tiles)
+                {
+                    if (Region.canMove(_npc.Location.X, _npc.Location.Y, tile.X,
+                            tile.Y, 0, 1, 1))
+                    {
+                        var distance = CalculateDistance(tile.X, tile.Y, _npc.Location.X, _npc.Location.Y);
+                        valid.Add(tile, distance);
+                    }
+                }
+
+                var elem = valid.FirstOrDefault();
+                if (elem.Key != null)
+                {
+                    AddToPath(elem.Key);
+                    Finish();
+                    return;
+                }
+            }
 
             /* Check if we're inside the NPC tiles */
             if (Location.IsPlayerInsideNPC(_npc.Follow, _npc))
