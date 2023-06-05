@@ -16,16 +16,15 @@ public interface IEntity
     public int CombatLevel { get; set; }
     public int Health { get; set; }
     public int MaxHealth { get; set; }
-    ICombatManager CombatManager { get; set; }
     public int AnimationId { get; set; }
     public IEntity Follow { get; set; }
-    
-    void PerformBlockAnimation();
-    void PerformAttackAnimation();
-    void DisplayHitSplat();
-    void NotifyAttacked(IEntity attacker);
+    public ICombatMethod CombatMethod { get; set; }
+    public IEntity CombatTarget { get; set; }
+    public Weapon Weapon { get; set; }
     void PerformAnimation(int animId);
     public DelayedTaskHandler DelayedTaskHandler { get; set; }
-    public ICombatBase CombatBase { get; set; }
-    
+    void PerformAttackAnimation();
+    void PerformBlockAnimation();
+    void DisplayHitSplat();
+
 }

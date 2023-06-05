@@ -222,8 +222,8 @@ public class PlayerUpdater
 
     private void AppendSingleHit(Player player, RSStream updatetempBlock)
     {
-        updatetempBlock.WriteByte((byte)player.CombatBase.DamageTaken.Damage); //hitDamage
-        updatetempBlock.WriteByteA((byte)player.CombatBase.DamageTaken.Type); //hitType
+        updatetempBlock.WriteByte((byte)player.CombatMethod.DamageTaken.Amount); //hitDamage
+        updatetempBlock.WriteByteA((byte)player.CombatMethod.DamageTaken.Type); //hitType
         updatetempBlock.WriteByteC(player.Health); //currentHealth
         updatetempBlock.WriteByte(player.MaxHealth); //maxHealth
     }

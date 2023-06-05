@@ -1,112 +1,89 @@
 ﻿using Scape05.Entities;
-using Scape05.Entities.Packets;
-using Scape05.Misc;
-using Scape05.World;
 
 namespace Scape05.Engine.Combat;
 
-public class MeleeCombat : ICombatBase
+public class MeleeCombat : ICombatMethod
 {
-    public IEntity Attacker { get; set; }
-    public IEntity Target { get; set; }
-    public CombatHit DamageTaken { get; set; } = null;
-    public bool NeedsToInitiate { get; set; }
-    public bool InCombat { get; set; }
-    public int Tick { get; set; }
-    public int WeaponSpeed { get; set; }
+    private readonly IEntity _owner;
+    public bool HasPerformedDamage { get; set; }
+    public bool HasTakenDamage { get; set; }
+    public int CombatTick { get; set; }
+    public DamageInfo DamageTaken { get; set; }
+    public bool SkipTick { get; set; }
+
+    public MeleeCombat(IEntity owner)
+    {
+        _owner = owner;
+    }
 
     public void Attack()
     {
-        if (Target == null || Attacker == null)
+        if (_owner.Weapon.Speed == 0 || _owner.Weapon == null)
             return;
-        Console.WriteLine($"{Attacker.Name} - CombatTick: {Tick}");
-        if (Attacker.Name == "Man")
-        {
-            Console.WriteLine();
-        }
-
-        var canMove = Region.canMove(Attacker.Location.X, Attacker.Location.Y, Target.Location.X, Target.Location.Y, 0, 1, 1);
-        if (!canMove)
-        {
-            return;
-        }
-
         
-        if (CanMeleeAttack())
+        /* Extra check to see if player is in combat? */
+        
+        if (_owner.CombatTarget != null)
         {
-            if (Attacker is Player)
+            if (SkipTick)
             {
-                PacketBuilder.SendMessage("Can attack from here!", (Player)Attacker);
+                SkipTick = false;
+                return;
             }
 
-            if (NeedsToInitiate)
+            if (CombatTick % _owner.Weapon.Speed == 0)
             {
-                Attacker.CombatBase.Tick = Attacker.CombatBase.WeaponSpeed;
-                NeedsToInitiate = false;
-                Attacker.CombatBase.InCombat = true;
-            }
-
-            if (Attacker.CombatBase.Tick >= Attacker.CombatBase.WeaponSpeed)
-            {
-                if (Target.CombatBase.Target != Attacker)
+                if (_owner.CombatTarget != null)
                 {
-                    Target.NotifyAttacked(Attacker);
+                    _owner.CombatTarget.CombatMethod.TakeDamage(new DamageInfo
+                    {
+                        DamageSource = _owner,
+                        Amount = 1,
+                        Type = DamageType.Damage
+                    });
+
+                    HasPerformedDamage = true;
+
+                    Console.WriteLine($"+ [{_owner.Name}] Attacked: [{_owner.CombatTarget.Name}]");
                 }
 
-                var damage = CalculateDamage();
-                Target.CombatBase.DamageTaken = damage;
-                Target.Health -= damage.Damage;
+                CombatTick = 0;
+            }
 
-                Console.WriteLine($"{Attacker.Name} Attacked: {Target.Name}.");
-                Attacker.CombatBase.Tick = 0;
-
-                if (Target.Health <= 0)
-                {
-                    Target.Health = 0;
-                    ConsoleColorHelper.Broadcast(1, $"{Attacker.Name} won over {Target.Name}");
-                    Attacker.Follow = null;
-                    Target.Follow = null;
-                    Attacker.CombatBase.InCombat = false;
-                }
-            }
+            CombatTick++;
         }
-        else
-        {
-            if (Attacker is Player)
-            {
-                PacketBuilder.SendMessage("Can't attack from here..", (Player)Attacker);
-            }
-        }
-            Attacker.CombatBase.Tick++;
-            if (Attacker.CombatBase.Tick > Attacker.CombatBase.WeaponSpeed)
-            {
-                Attacker.CombatBase.Tick = 0;
-            }
     }
 
-    private bool CanMeleeAttack()
+    public void TakeDamage(DamageInfo info)
     {
-        var horizontally = Attacker.Location.X >= Target.Location.X - 1 &&
-                           Attacker.Location.X <= Target.Location.X + Target.Size;
-        var vertically = Attacker.Location.Y >= Target.Location.Y - 1 &&
-                         Attacker.Location.Y <= Target.Location.Y + Target.Size;
+        DamageTaken = info;
 
-        var delta = Location.Delta(Attacker.Location, Target.Location);
+        if (_owner.CombatTarget == null)
+        {
+            _owner.CombatTarget = info.DamageSource;
+            SkipTick = true;
+        }
 
-        // var t = Math.Abs(delta.X) == Math.Abs(delta.Y) && delta.X != 0 && delta.Y != 0;
-
-        var t = Location.IsPlayerInsideNPC(Target, Attacker);
-
-        return horizontally && vertically & !t;
+        _owner.Health -= info.Amount;
+        HasTakenDamage = true;
+        _owner.DisplayHitSplat();
     }
 
-    private CombatHit CalculateDamage()
+
+    public void SetAnimation()
     {
-        return new CombatHit
+        if (HasPerformedDamage)
         {
-            // Damage = new Random().Next(1,5),
-            Damage = 5,
-            Type = DamageType.Damage
-        };
+            /* Set Attack Animation */
+            _owner.PerformAttackAnimation();
+        }
+        else if (HasTakenDamage)
+        {
+            /* Set Block Animation */
+            _owner.PerformBlockAnimation();
+        }
+
+        HasPerformedDamage = false;
+        HasTakenDamage = false;
     }
 }

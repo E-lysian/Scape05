@@ -20,41 +20,15 @@ public class NPC : IEntity
     public int CombatLevel { get; set; } = 1;
     public int Health { get; set; } = 25;
     public int MaxHealth { get; set; } = 25;
-    public ICombatManager CombatManager { get; set; }
     public int AnimationId { get; set; } = -1;
-
-    public void PerformBlockAnimation()
-    {
-        AnimationId = CombatManager.Weapon.Animation.BlockId;
-        Flags |= NPCUpdateFlags.Animation;
-        IsUpdateRequired = true;
-    }
-
-    public void PerformAttackAnimation()
-    {
-        AnimationId = CombatManager.Weapon.Animation.AttackId;
-        Flags |= NPCUpdateFlags.Animation;
-        IsUpdateRequired = true;
-    }
-
+    
     public void DisplayHitSplat()
     {
         Flags |= NPCUpdateFlags.SingleHit;
         IsUpdateRequired = true;
     }
 
-    public void NotifyAttacked(IEntity attacker)
-    {
-        Console.WriteLine($"{Name} Notified Attack by: {attacker.Name}");
-        // Engage in combat with the attacker
-        CombatBase.Attacker = this;
-        CombatBase.Target = attacker;
-        CombatBase.Tick = 2;
-        NPC npc = (NPC)CombatBase.Attacker;
-        npc.Follow = attacker;
-        npc.Flags |= NPCUpdateFlags.InteractingEntity;
-        npc.InteractingEntityId = attacker.Index + 32768;
-    }
+    public Weapon Weapon { get; set; }
 
     public void PerformAnimation(int animId)
     {
@@ -64,22 +38,37 @@ public class NPC : IEntity
     }
 
     public DelayedTaskHandler DelayedTaskHandler { get; set; } = new();
-
-    public ICombatBase CombatBase { get; set; }
+    
     public NPCMovementHandler MovementHandler { get; set; }
     public bool CanWalk { get; set; }
     public Face Face { get; set; }
+    
     public IEntity Follow { get; set; } = null;
+    public ICombatMethod CombatMethod { get; set; }
+    public IEntity CombatTarget { get; set; }
+    
     public int InteractingEntityId { get; set; } = 0x00FFFF;
     public bool Dead { get; set; }
 
     public NPC()
     {
         MovementHandler = new NPCMovementHandler(this);
-        CombatManager = new MeleeCombatHandler(this);
-        CombatBase = new MeleeCombat();
     }
 
+    public void PerformBlockAnimation()
+    {
+        AnimationId = Weapon.Animation.BlockId;
+        Flags |= NPCUpdateFlags.Animation;
+        IsUpdateRequired = true;
+    }
+
+    public void PerformAttackAnimation()
+    {
+        AnimationId = Weapon.Animation.AttackId;
+        Flags |= NPCUpdateFlags.Animation;
+        IsUpdateRequired = true;
+    }
+    
     public void Reset()
     {
         NeedsPlacement = false;
@@ -88,6 +77,5 @@ public class NPC : IEntity
         //MovementHandler.PrimaryDirection = -1;
         //MovementHandler.SecondaryDirection = -1;
         AnimationId = -1;
-        CombatBase.DamageTaken = null;
     }
 }

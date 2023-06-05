@@ -31,8 +31,6 @@ public class PlayerCommandPacket : IPacket
             case "npcfollow":
                 NPCFollow();
                 break;
-            case "damage":
-                PacketBuilder.TakeDamage(player);
                 break;
             case "focus":
                 FocusPlayer();

@@ -10,7 +10,7 @@ public class RegularWalkPacket : IPacket
     public void Build(Player player)
     {
         
-        player.CombatBase.Target = null;
+        player.CombatTarget = null;
         player.Flags |= PlayerUpdateFlags.InteractingEntity;
         player.InteractingEntityId = 0x00FFFF;
         player.IsUpdateRequired = true;

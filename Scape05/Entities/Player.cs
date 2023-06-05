@@ -18,9 +18,13 @@ public class Player : Client, IEntity
     public int CombatLevel { get; set; } = 3;
     public int MaxHealth { get; set; } = 9999;
     public int Health { get; set; } = 9999;
-    public ICombatManager CombatManager { get; set; }
     public int AnimationId { get; set; } = -1;
+    
     public IEntity Follow { get; set; }
+    public ICombatMethod CombatMethod { get; set; }
+    public IEntity CombatTarget { get; set; }
+    
+    public Weapon Weapon { get; set; }
     public int TotalLevel { get; set; }
     public bool IsUpdateRequired { get; set; }
     public bool NeedsPlacement { get; set; }
@@ -41,13 +45,8 @@ public class Player : Client, IEntity
         PlayerUpdater = new PlayerUpdater(this);
         MovementHandler = new MovementHandler(this);
         PacketHandler = new PacketHandler(this);
-        CombatManager = new MeleeCombatHandler(this);
-        CombatManager.Weapon = new(4151, 1, 4, new CombatAnimations(1658, 1659, 1111, 836), WeaponType.SWORD);
-
-        CombatBase  = new MeleeCombat
-        {
-            WeaponSpeed = 4
-        };
+        CombatMethod = new MeleeCombat(this);
+        Weapon = new(4151, 4, new CombatAnimations(1658, 1659, 1111, 836), 1);
         
         var Lumbridge = new Location(3200, 3200);
         var Goblins = new Location(3253, 3235);
@@ -76,14 +75,14 @@ public class Player : Client, IEntity
     
     public void PerformBlockAnimation()
     {
-        AnimationId = CombatManager.Weapon.Animation.BlockId;
+        AnimationId = Weapon.Animation.BlockId;
         Flags |= PlayerUpdateFlags.Animation;
         IsUpdateRequired = true;
     }
 
     public void PerformAttackAnimation()
     {
-        AnimationId = CombatManager.Weapon.Animation.AttackId;
+        AnimationId = Weapon.Animation.AttackId;
         Flags |= PlayerUpdateFlags.Animation;
         IsUpdateRequired = true;
     }
@@ -94,19 +93,6 @@ public class Player : Client, IEntity
         IsUpdateRequired = true;
     }
 
-    public void NotifyAttacked(IEntity attacker)
-    {
-        Console.WriteLine($"{Name} Notified Attack by: {attacker.Name}");
-        // Engage in combat with the attacker
-        CombatBase.Attacker = this;
-        CombatBase.Target = attacker;
-        CombatBase.Tick -= 1;
-        
-        Player player = (Player)CombatBase.Attacker;
-        player.Flags |= PlayerUpdateFlags.InteractingEntity;
-        player.InteractingEntityId = attacker.Index;
-    }
-
     public void PerformAnimation(int animId)
     {
         AnimationId = animId;
@@ -115,8 +101,6 @@ public class Player : Client, IEntity
     }
 
     public DelayedTaskHandler DelayedTaskHandler { get; set; } = new();
-
-    public ICombatBase CombatBase { get; set; }
     public int InteractingEntityId { get; set; }
 
     public void Login()
@@ -189,6 +173,5 @@ public class Player : Client, IEntity
         MovementHandler.PrimaryDirection = -1;
         MovementHandler.SecondaryDirection = -1;
         AnimationId = -1;
-        CombatBase.DamageTaken = null;
     }
 }

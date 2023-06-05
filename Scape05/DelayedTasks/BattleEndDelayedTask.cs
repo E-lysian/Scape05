@@ -10,50 +10,50 @@ public class BattleEndDelayedTask : IDelayedTask
 
     public BattleEndDelayedTask(IEntity entity)
     {
-        _entity = entity;
-        _entity.Health = entity.MaxHealth;
-
-        Console.WriteLine($"+ Tick Registered: {nameof(BattleEndDelayedTask)} with a delay of {Delay} ticks.");
-
-        
-        
-        switch (entity)
-        {
-            case Player player:
-                DelayedTask = () =>
-                {
-                    ConsoleColorHelper.Broadcast(1, $"+ {nameof(BattleEndDelayedTask)} invoked.");
-                    PacketBuilder.Respawn(player);
-                    /* No longer in combat */
-                    /* Reset animation */
-                };
-                break;
-            case NPC npc:
-                if (npc.Dead)
-                    return;
-
-                var target = new Player();
-                target = (Player)npc.CombatBase.Target;
-                
-                Delay = 3;
-                DelayedTask = () =>
-                {
-                    ConsoleColorHelper.Broadcast(1, $"+ {nameof(BattleEndDelayedTask)} invoked.");
-                    PacketBuilder.SendGroundItemPacket(npc.Location, 531, 1, target);
-                    npc.Dead = true;
-                    npc.DelayedTaskHandler.RegisterDelayedTask(new SpawnNPCDelayedTask(8, npc));
-                };
-                break;
-            default:
-                ConsoleColorHelper.Broadcast(0, "what the heck");
-                break;
-        }
-        
-        if (_entity.CombatBase.Target != null)
-        {
-            _entity.CombatBase.Target.CombatBase.Target = null;
-            _entity.CombatBase.Target = null;
-        }
+        // _entity = entity;
+        // _entity.Health = entity.MaxHealth;
+        //
+        // Console.WriteLine($"+ Tick Registered: {nameof(BattleEndDelayedTask)} with a delay of {Delay} ticks.");
+        //
+        //
+        //
+        // switch (entity)
+        // {
+        //     case Player player:
+        //         DelayedTask = () =>
+        //         {
+        //             ConsoleColorHelper.Broadcast(1, $"+ {nameof(BattleEndDelayedTask)} invoked.");
+        //             PacketBuilder.Respawn(player);
+        //             /* No longer in combat */
+        //             /* Reset animation */
+        //         };
+        //         break;
+        //     case NPC npc:
+        //         if (npc.Dead)
+        //             return;
+        //
+        //         var target = new Player();
+        //         target = (Player)npc.CombatBase.Target;
+        //         
+        //         Delay = 3;
+        //         DelayedTask = () =>
+        //         {
+        //             ConsoleColorHelper.Broadcast(1, $"+ {nameof(BattleEndDelayedTask)} invoked.");
+        //             PacketBuilder.SendGroundItemPacket(npc.Location, 531, 1, target);
+        //             npc.Dead = true;
+        //             npc.DelayedTaskHandler.RegisterDelayedTask(new SpawnNPCDelayedTask(8, npc));
+        //         };
+        //         break;
+        //     default:
+        //         ConsoleColorHelper.Broadcast(0, "what the heck");
+        //         break;
+        // }
+        //
+        // if (_entity.CombatBase.Target != null)
+        // {
+        //     _entity.CombatBase.Target.CombatBase.Target = null;
+        //     _entity.CombatBase.Target = null;
+        // }
     }
 
     public int Delay { get; set; } = 3;

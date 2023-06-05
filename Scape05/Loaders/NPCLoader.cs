@@ -10,11 +10,12 @@ namespace Scape05.Engine.Loaders;
 public class NPCLoader
 {
     public static List<NPCDefinition> npcs = new();
+
     public static void Load()
     {
         var npcDefs = File.ReadAllText("../../../Data/NPCDefinitions.json");
         var npcSpawns = File.ReadAllText("../../../Data/NPCSpawns.json");
-        
+
         npcs = JsonConvert.DeserializeObject<List<NPCDefinition>>(npcDefs).OrderBy(o => o.Id).ToList();
         var NPCs = JsonConvert.DeserializeObject<List<NPCSpawn>>(npcSpawns).OrderBy(o => o.Id).ToList();
 
@@ -33,7 +34,7 @@ public class NPCLoader
         {
             return;
         }
-        
+
         var npc = new NPC
         {
             ModelId = npcDef.Id,
@@ -47,17 +48,13 @@ public class NPCLoader
             Dead = false,
             Health = npcDef.Hitpoints == 0 ? 1 : npcDef.Hitpoints
         };
-        
-        npc.BuildArea = new BuildArea(npc);
-        
-        npc.CombatManager = new MeleeCombatHandler(npc)
-        {
-            Weapon = new Weapon(-1, -1, npcDef.AttackSpeed,
-                new CombatAnimations(npcDef.AttackAnim, npcDef.DefenceAnim, -1, npcDef.DeathAnim), WeaponType.HAND)
-        };
 
-        npc.CombatBase.WeaponSpeed = npcDef.AttackSpeed;
-        
+        npc.BuildArea = new BuildArea(npc);
+
+        npc.CombatMethod = new MeleeCombat(npc);
+        npc.Weapon = new Weapon(-1, npcDef.AttackSpeed,
+            new CombatAnimations(npcDef.AttackAnim, npcDef.DefenceAnim, -1, npcDef.DeathAnim), 1);
+
         SetFaceBasedOnWalk(npc, npcSpawn.Walk);
 
         Server.AddNPC(npc);

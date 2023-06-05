@@ -16,7 +16,6 @@ public class RespawnPacketCommand : IPacketCommand
         player.BuildArea = new BuildArea(player);
         player.IsUpdateRequired = true;
         player.NeedsPlacement = true;
-        player.CombatBase.InCombat = false;
         player.AnimationId = 0x00FFFF;
         player.Flags |= PlayerUpdateFlags.Animation;
         // player.Health = player.MaxHealth;
