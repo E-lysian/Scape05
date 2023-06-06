@@ -21,6 +21,7 @@ public class NPC : IEntity
     public int Health { get; set; } = 25;
     public int MaxHealth { get; set; } = 25;
     public int AnimationId { get; set; } = -1;
+    public bool InCombat { get; set; }
     
     public void DisplayHitSplat()
     {
@@ -32,6 +33,7 @@ public class NPC : IEntity
 
     public void PerformAnimation(int animId)
     {
+        Console.WriteLine($"[{animId}] - Registered Animation");
         AnimationId = animId;
         Flags |= NPCUpdateFlags.Animation;
         IsUpdateRequired = true;

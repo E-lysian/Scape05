@@ -10,4 +10,6 @@ public interface ICombatMethod
     void SetAnimation();
     bool HasPerformedDamage { get; set; }
     bool HasTakenDamage { get; set; }
+    public int CombatTick { get; set; }
+    public bool CanCombat { get; set; }
 }

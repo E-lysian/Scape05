@@ -15,14 +15,15 @@ public class Player : Client, IEntity
     public BuildArea BuildArea { get; set; }
 
     /* Extract these? */
-    public int CombatLevel { get; set; } = 3;
-    public int MaxHealth { get; set; } = 9999;
-    public int Health { get; set; } = 9999;
+    public int CombatLevel { get; set; } = 70;
+    public int MaxHealth { get; set; } = 99;
+    public int Health { get; set; } = 99;
     public int AnimationId { get; set; } = -1;
     
     public IEntity Follow { get; set; }
     public ICombatMethod CombatMethod { get; set; }
     public IEntity CombatTarget { get; set; }
+    public bool InCombat { get; set; }
     
     public Weapon Weapon { get; set; }
     public int TotalLevel { get; set; }
@@ -93,8 +94,11 @@ public class Player : Client, IEntity
         IsUpdateRequired = true;
     }
 
+   
+
     public void PerformAnimation(int animId)
     {
+        Console.WriteLine($"[{animId}] - Registered Animation");
         AnimationId = animId;
         Flags |= PlayerUpdateFlags.Animation;
         IsUpdateRequired = true;

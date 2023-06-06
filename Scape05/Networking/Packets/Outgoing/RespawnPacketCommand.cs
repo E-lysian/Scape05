@@ -18,7 +18,7 @@ public class RespawnPacketCommand : IPacketCommand
         player.NeedsPlacement = true;
         player.AnimationId = 0x00FFFF;
         player.Flags |= PlayerUpdateFlags.Animation;
-        // player.Health = player.MaxHealth;
+        player.Health = player.MaxHealth;
         PacketBuilder.SendMapRegion(player);
     }
 

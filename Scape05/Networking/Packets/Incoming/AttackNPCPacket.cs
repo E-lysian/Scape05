@@ -29,7 +29,7 @@ public class AttackNPCPacket : IPacket
         player.InteractingEntityId = _target.Index;
         player.IsUpdateRequired = true;
 
-        if (CanMeleeAttack())
+        if (npc.CombatTarget == null)
         {
             player.CombatTarget = npc;
         }

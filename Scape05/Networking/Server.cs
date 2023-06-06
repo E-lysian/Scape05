@@ -33,17 +33,15 @@ public class Server
         ResetPlayers();
         ResetNPCs();
 
-        foreach (var entity in Players.Concat<IEntity>(NPCs))
-        {
-            if (entity == null) continue;
-            // entity.CombatBase.DamageTaken = null;
-            if (entity.Health <= 0)
-            {
-                entity.PerformAnimation(entity.CombatTarget.Weapon.Animation.FallAnim);
-                entity.DelayedTaskHandler.RegisterDelayedTask(new BattleEndDelayedTask(entity));
-                /* Register respawn as a delayed tick task */
-            }
-        }
+        // foreach (var entity in Players.Concat<IEntity>(NPCs))
+        // {
+        //     if (entity == null) continue;
+        //     if (entity.Health <= 0)
+        //     {
+        //         entity.PerformAnimation(entity.CombatTarget.Weapon.Animation.FallAnim);
+        //         entity.DelayedTaskHandler.RegisterDelayedTask(new BattleEndDelayedTask(entity));
+        //     }
+        // }
 
         foreach (var entity in Players)
         {

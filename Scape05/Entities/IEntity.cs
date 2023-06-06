@@ -26,5 +26,6 @@ public interface IEntity
     void PerformAttackAnimation();
     void PerformBlockAnimation();
     void DisplayHitSplat();
+    public bool InCombat { get; set; }
 
 }
