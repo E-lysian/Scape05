@@ -105,7 +105,6 @@ public class MeleeCombat : ICombatMethod
                 
             npc.Flags |= NPCUpdateFlags.InteractingEntity;
             npc.InteractingEntityId = npc.Follow.Index + 32768;
-            npc.IsUpdateRequired = true;
         }
         
         if (_owner is Player)
@@ -115,7 +114,6 @@ public class MeleeCombat : ICombatMethod
                 
             player.Flags |= PlayerUpdateFlags.InteractingEntity;
             player.InteractingEntityId = _owner.CombatTarget.Index;
-            player.IsUpdateRequired = true;
         }
 
         if (info.Amount > _owner.Health)

@@ -16,6 +16,7 @@ public class BattleEndDelayedTask : IDelayedTask
         
         
         entity.CombatTarget.CombatMethod.CanCombat = true;
+        entity.Follow = null;
          
          Console.WriteLine($"+ Tick Registered: {nameof(BattleEndDelayedTask)} with a delay of {Delay} ticks.");
          
@@ -43,7 +44,9 @@ public class BattleEndDelayedTask : IDelayedTask
                      ConsoleColorHelper.Broadcast(1, $"+ {nameof(BattleEndDelayedTask)} invoked.");
                      PacketBuilder.SendGroundItemPacket(npc.Location, 531, 1, (Player)npc.CombatTarget);
                      npc.DelayedTaskHandler.RegisterDelayedTask(new SpawnNPCDelayedTask(8, npc));
-                    
+
+                     npc.Dead = true;
+                     
                      entity.InCombat = false;
                      entity.CombatTarget.InCombat = false;
 
@@ -79,6 +82,7 @@ public class SpawnNPCDelayedTask : IDelayedTask
         {
             npc.Health = npc.MaxHealth;
             ConsoleColorHelper.Broadcast(2, $"[{npc.Index}] {npc.Name} has respawned.");
+            npc.Dead = false;
         };
     }
 
