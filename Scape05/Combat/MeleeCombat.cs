@@ -1,5 +1,7 @@
 ﻿using Scape05.Entities;
 using Scape05.Handlers;
+using Scape05.Misc;
+using Scape05.World;
 
 namespace Scape05.Engine.Combat;
 
@@ -22,25 +24,23 @@ public class MeleeCombat : ICombatMethod
 
     public void Attack()
     {
-        return;
         if (_owner.Weapon.Speed == 0 || _owner.Weapon == null || !CanCombat)
             return;
 
-        /* Within Range? */
         /* Extra check to see if player is in combat? */
-        
-       
-        
+
+        /* If inside the target, step away */
+
         if (_owner.CombatTarget != null && _owner.CombatMethod.CanCombat)
         {
-            var horizontally = _owner.Location.X >= _owner.CombatTarget.Location.X - 1 && _owner.Location.X <= _owner.CombatTarget.Location.X + _owner.CombatTarget.Size;
-            var vertically = _owner.Location.Y >= _owner.CombatTarget.Location.Y - 1 && _owner.Location.Y <= _owner.CombatTarget.Location.Y + _owner.CombatTarget.Size;
-            var withinRange = horizontally && vertically;
+            var withinRange = WithinRange();
+            Console.WriteLine(
+                $"[{_owner.Name}] Within Range: {withinRange} of {_owner.CombatTarget} Size: {_owner.CombatTarget.Size}");
             if (!withinRange)
             {
                 return;
             }
-            
+
             _owner.InCombat = true;
             if (SkipTick)
             {
@@ -75,6 +75,17 @@ public class MeleeCombat : ICombatMethod
         }
     }
 
+    private bool WithinRange()
+    {
+        var horizontally = _owner.Location.X >= _owner.CombatTarget.Location.X - _owner.Size &&
+                           _owner.Location.X <= _owner.CombatTarget.Location.X + _owner.CombatTarget.Size;
+        var vertically = _owner.Location.Y >= _owner.CombatTarget.Location.Y - _owner.Size &&
+                         _owner.Location.Y <= _owner.CombatTarget.Location.Y + _owner.CombatTarget.Size;
+
+        var withinRange = horizontally && vertically;
+        return withinRange;
+    }
+
 
     public void TakeDamage(DamageInfo info)
     {
@@ -84,11 +95,18 @@ public class MeleeCombat : ICombatMethod
         {
             _owner.CombatTarget = info.DamageSource;
             SkipTick = true;
-            if (_owner is NPC)
-            {
-                var npc = (NPC)_owner;
-                npc.Follow = _owner.CombatTarget;
-            }
+            
+        }
+        
+        if (_owner is NPC)
+        {
+            var npc = (NPC)_owner;
+            npc.Follow = _owner.CombatTarget;
+                
+            npc.Flags |= NPCUpdateFlags.InteractingEntity;
+            npc.InteractingEntityId = npc.Follow.Index + 32768;
+            npc.IsUpdateRequired = true;
+                
         }
 
         if (info.Amount > _owner.Health)

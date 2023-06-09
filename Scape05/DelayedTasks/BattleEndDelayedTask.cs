@@ -15,6 +15,7 @@ public class BattleEndDelayedTask : IDelayedTask
         entity.CombatTarget.CombatMethod.CombatTick = 0;
         
         
+       
         entity.CombatTarget.CombatMethod.CanCombat = true;
          
          Console.WriteLine($"+ Tick Registered: {nameof(BattleEndDelayedTask)} with a delay of {Delay} ticks.");
@@ -45,6 +46,11 @@ public class BattleEndDelayedTask : IDelayedTask
                      entity.CombatMethod.CanCombat = true;
                      entity.CombatTarget.CombatTarget = null;
                      entity.CombatTarget = null;
+
+                     npc.Flags |= NPCUpdateFlags.InteractingEntity;
+                     npc.InteractingEntityId = 0x000FF;
+                     npc.IsUpdateRequired = true;
+
 
                  };
                  break;
