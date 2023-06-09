@@ -11,6 +11,7 @@ public class BattleEndDelayedTask : IDelayedTask
     public BattleEndDelayedTask(IEntity entity)
     {
 
+        
         entity.CombatMethod.CombatTick = 0;
         entity.CombatTarget.CombatMethod.CombatTick = 0;
         
@@ -30,6 +31,8 @@ public class BattleEndDelayedTask : IDelayedTask
                      /* No longer in combat */
                      /* Reset animation */
 
+                     player.PerformAnimation(0x0000FF);
+                     
                      entity.InCombat = false;
                      entity.CombatTarget.InCombat = false;
                      entity.CombatMethod.CanCombat = true;
@@ -53,11 +56,11 @@ public class BattleEndDelayedTask : IDelayedTask
                      entity.CombatMethod.CanCombat = true;
                      entity.CombatTarget.CombatTarget = null;
                      entity.CombatTarget = null;
-
                      npc.Flags |= NPCUpdateFlags.InteractingEntity;
                      npc.InteractingEntityId = 0x000FF;
                      npc.IsUpdateRequired = true;
-
+                     
+                     npc.PerformAnimation(0x0000FF);
 
                  };
                  break;
