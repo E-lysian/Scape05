@@ -77,7 +77,7 @@ public class WalkToObjectPacket : IPacket
 
         //client.IsUpdateRequired = true;
 
-        PacketBuilder.SendMessage($"DestX: {_destX} DestY: {_destY}", player);
+        //PacketBuilder.SendMessage($"DestX: {_destX} DestY: {_destY}", player);
         return;
         var tiles = new List<Location>();
         if (path.Length > 0)

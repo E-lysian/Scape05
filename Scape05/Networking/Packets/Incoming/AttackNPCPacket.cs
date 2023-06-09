@@ -34,6 +34,8 @@ public class AttackNPCPacket : IPacket
             player.CombatTarget = npc;
         }
         
+        player.MovementHandler.Reset();
+        
         var path = PathFinder.getPathFinder().FindRoute(_attacker, npc.Location.X, npc.Location.Y, true, npc.Size, npc.Size);
         
         
