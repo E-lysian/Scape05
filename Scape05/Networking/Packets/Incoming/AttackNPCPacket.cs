@@ -29,16 +29,23 @@ public class AttackNPCPacket : IPacket
         player.InteractingEntityId = _target.Index;
         player.IsUpdateRequired = true;
 
+        if (_attacker.InCombat)
+        {
+            PacketBuilder.SendMessage("You're already in combat.", _attacker);
+            return;
+        }
+
         if (npc.CombatTarget == null)
         {
             player.CombatTarget = npc;
         }
-        
+
         player.MovementHandler.Reset();
-        
-        var path = PathFinder.getPathFinder().FindRoute(_attacker, npc.Location.X, npc.Location.Y, true, npc.Size, npc.Size);
-        
-        
+
+        var path = PathFinder.getPathFinder()
+            .FindRoute(_attacker, npc.Location.X, npc.Location.Y, true, npc.Size, npc.Size);
+
+
         if (path != null)
         {
             for (var i = 0; i < path.Count; i++) player.MovementHandler.AddToPath(path[i]);
@@ -46,7 +53,6 @@ public class AttackNPCPacket : IPacket
             /* Remove the first waypoint, aka the tile we're standing on, otherwise it'll take an extra tick to start walking */
             player.MovementHandler.Finish();
         }
-        
     }
 
     private bool CanMeleeAttack()
