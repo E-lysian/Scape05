@@ -43,7 +43,9 @@ public class GameEngine
         _listener.Start(10);
         _isRunning = true;
 
+        Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine( $"[{DateTime.Now}] Server has started!");
+        Console.ForegroundColor = ConsoleColor.White;
     }
 
     private void Tick()

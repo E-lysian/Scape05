@@ -33,6 +33,18 @@ public class AttackNPCPacket : IPacket
         {
             player.CombatTarget = npc;
         }
+        
+        var path = PathFinder.getPathFinder().FindRoute(_attacker, npc.Location.X, npc.Location.Y, true, npc.Size, npc.Size);
+        
+        
+        if (path != null)
+        {
+            for (var i = 0; i < path.Count; i++) player.MovementHandler.AddToPath(path[i]);
+
+            /* Remove the first waypoint, aka the tile we're standing on, otherwise it'll take an extra tick to start walking */
+            player.MovementHandler.Finish();
+        }
+        
     }
 
     private bool CanMeleeAttack()

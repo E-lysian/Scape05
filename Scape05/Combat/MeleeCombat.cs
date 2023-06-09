@@ -22,14 +22,25 @@ public class MeleeCombat : ICombatMethod
 
     public void Attack()
     {
+        return;
         if (_owner.Weapon.Speed == 0 || _owner.Weapon == null || !CanCombat)
             return;
 
         /* Within Range? */
         /* Extra check to see if player is in combat? */
-
+        
+       
+        
         if (_owner.CombatTarget != null && _owner.CombatMethod.CanCombat)
         {
+            var horizontally = _owner.Location.X >= _owner.CombatTarget.Location.X - 1 && _owner.Location.X <= _owner.CombatTarget.Location.X + _owner.CombatTarget.Size;
+            var vertically = _owner.Location.Y >= _owner.CombatTarget.Location.Y - 1 && _owner.Location.Y <= _owner.CombatTarget.Location.Y + _owner.CombatTarget.Size;
+            var withinRange = horizontally && vertically;
+            if (!withinRange)
+            {
+                return;
+            }
+            
             _owner.InCombat = true;
             if (SkipTick)
             {
@@ -73,6 +84,11 @@ public class MeleeCombat : ICombatMethod
         {
             _owner.CombatTarget = info.DamageSource;
             SkipTick = true;
+            if (_owner is NPC)
+            {
+                var npc = (NPC)_owner;
+                npc.Follow = _owner.CombatTarget;
+            }
         }
 
         if (info.Amount > _owner.Health)

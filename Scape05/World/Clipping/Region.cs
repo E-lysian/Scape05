@@ -861,9 +861,9 @@ public class Region
     public static bool canInteract(int dstX, int dstY, int absX, int absY, int curX,
         int curY, int sizeX, int sizeY, int walkToData)
     {
-        if ((walkToData & 0x80000000) != 0)
-            if (curX == dstX && curY == dstY)
-                return false;
+        // if ((walkToData & 0x80000000) != 0)
+        //     if (curX == dstX && curY == dstY)
+        //         return false;
 
         var maxX = dstX + sizeX - 1;
         var maxY = dstY + sizeY - 1;

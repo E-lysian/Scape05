@@ -38,25 +38,27 @@ public class WalkToObjectPacket : IPacket
         
         //player.MovementHandler.Reset();
         player.MovementHandler.SetRunToggled(running);
-        return;
-        if (_player.InteractingEntityId != -1)
-        {
-            /* Get the entity size */
-            /* Get the outer tiles */
-            /* Check which ones are valid */
-            /* Pathfind to each tile and select the one path that has the least amount of waypoints */
-            var npc = Server.NPCs[_player.InteractingEntityId];
-            var outerTiles = npc.Location.GetOuterTiles(npc.Size);
-            var dictionary = new List<List<Location>>();
-            foreach (var outerTile in outerTiles)
-            {
-                if (Region.canMove(_player.Location.X, _player.Location.Y, outerTile.X, outerTile.Y, 0, 1, 1))
-                {
-                    var foundPath = PathFinder.getPathFinder().FindRoute(_player, outerTile.X, outerTile.Y, true, 1, 1);
-                    dictionary.Add(foundPath);
-                }
-            }
-        }
+        // var npc = Server.NPCs[_player.InteractingEntityId];
+        // PathFinder.getPathFinder().FindRoute(_player, npc.Location.X, npc.Location.Y, true, 1, 1);
+        
+        // if (_player.InteractingEntityId != -1)
+        // {
+        //     /* Get the entity size */
+        //     /* Get the outer tiles */
+        //     /* Check which ones are valid */
+        //     /* Pathfind to each tile and select the one path that has the least amount of waypoints */
+        //     var npc = Server.NPCs[_player.InteractingEntityId];
+        //     var outerTiles = npc.Location.GetOuterTiles(npc.Size);
+        //     var dictionary = new List<List<Location>>();
+        //     foreach (var outerTile in outerTiles)
+        //     {
+        //         if (Region.canMove(_player.Location.X, _player.Location.Y, outerTile.X, outerTile.Y, 0, 1, 1))
+        //         {
+        //             var foundPath = PathFinder.getPathFinder().FindRoute(_player, outerTile.X, outerTile.Y, true, 1, 1);
+        //             dictionary.Add(foundPath);
+        //         }
+        //     }
+        // }
 
 
         Console.WriteLine($"X: {firstStepX} - Y: {firstStepY} - Running: {running}");

@@ -73,7 +73,7 @@ public class PathFinder
             {
                 /* Absolute magic, stops before the NPC at the closest tile :sob: */
                 if (xLength != 0 && yLength != 0 && Region.canInteract(destX, destY, curAbsX, curAbsY, curX, curY,
-                        player.CombatTarget.Size, player.CombatTarget.Size, 0))
+                        xLength, yLength, 0))
                 {
                     foundPath = true;
                     break;
