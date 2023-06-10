@@ -136,8 +136,9 @@ public class MeleeCombat : ICombatMethod
 
             _owner.CombatMethod.CanCombat = false;
             _owner.CombatTarget.CombatMethod.CanCombat = false;
-            _owner.PerformAnimation(_owner.Weapon.Animation.FallAnim);
-
+            
+            HasPerformedDamage = false;
+            HasTakenDamage = false;
 
             _owner.DelayedTaskHandler.RegisterDelayedTask(new BattleEndDelayedTask(_owner));
         }
@@ -148,9 +149,9 @@ public class MeleeCombat : ICombatMethod
     {
         if (_owner.Health <= 0)
         {
+            _owner.PerformAnimation(_owner.Weapon.Animation.FallAnim);
             return;
         }
-
         if (HasPerformedDamage)
         {
             /* Set Attack Animation */

@@ -35,7 +35,7 @@ public class AttackNPCPacket : IPacket
             return;
         }
 
-        if (npc.CombatTarget != null)
+        if (npc.CombatTarget != null && npc.CombatTarget != _attacker)
         {
             PacketBuilder.SendMessage("They are already in combat.", _attacker);
             return;

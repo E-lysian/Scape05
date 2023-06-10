@@ -128,7 +128,7 @@ public class Server
     
         foreach (var entity in entities)
         {
-            if (entity == null || !entity.InCombat || !entity.CombatTarget.InCombat) continue;
+            if (entity == null) continue;
             entity.CombatMethod.SetAnimation();
         }
     }

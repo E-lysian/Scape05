@@ -22,6 +22,9 @@ public class PlayerCommandPacket : IPacket
             case "npc":
                 NPCCommand();
                 break;
+            case "arrow":
+                SpawnProjectile();
+                break;
             case "tele":
                 Teleport();
                 break;
@@ -30,7 +33,6 @@ public class PlayerCommandPacket : IPacket
                 break;
             case "npcfollow":
                 NPCFollow();
-                break;
                 break;
             case "focus":
                 FocusPlayer();
@@ -49,10 +51,10 @@ public class PlayerCommandPacket : IPacket
                 PacketBuilder.SendMessage(
                     $"LocalX: {player.BuildArea.GetPositionRelativeToOffsetChunkX()} - LocalY: {player.BuildArea.GetPositionRelativeToOffsetChunkY()}",
                     player);
-                
+
                 PacketBuilder.SendMessage($"Blocked: {Region.Blocked(_player.Location.X, _player.Location.Y, 0)}",
                     player);
-                
+
                 break;
             default:
                 PacketBuilder.SendMessage($"Unknown command: '{_commandArgs[0]}'", player);
@@ -74,7 +76,8 @@ public class PlayerCommandPacket : IPacket
         }
         else
         {
-            PacketBuilder.SendMessage($"Invalid command syntax! ::spawn [{typeof(UInt16)}] [{typeof(UInt16)}] [{typeof(UInt16)}]", _player);
+            PacketBuilder.SendMessage(
+                $"Invalid command syntax! ::spawn [{typeof(UInt16)}] [{typeof(UInt16)}] [{typeof(UInt16)}]", _player);
         }
     }
 
@@ -94,9 +97,9 @@ public class PlayerCommandPacket : IPacket
         }
         else
         {
-            PacketBuilder.SendMessage($"Invalid command syntax! ::tele [{typeof(UInt16)}] [{typeof(UInt16)}] [{typeof(UInt16)}]", _player);
+            PacketBuilder.SendMessage(
+                $"Invalid command syntax! ::tele [{typeof(UInt16)}] [{typeof(UInt16)}] [{typeof(UInt16)}]", _player);
         }
-        
     }
 
     private void FocusPlayer()
@@ -129,7 +132,7 @@ public class PlayerCommandPacket : IPacket
             PacketBuilder.SendMessage($"Invalid command syntax! ::npcwalk [{typeof(UInt16)}]", _player);
         }
     }
-    
+
     private void NPCFollow()
     {
         if (int.TryParse(_commandArgs[1], out int npcIndex))
@@ -150,7 +153,26 @@ public class PlayerCommandPacket : IPacket
             PacketBuilder.SendMessage($"Invalid command syntax! ::npcwalk [{typeof(UInt16)}]", _player);
         }
     }
-    
+
+    private void SpawnProjectile()
+    {
+        short npcIndex = 2017;
+        var npc = Server.NPCs[npcIndex];
+
+        var pX = _player.Location.X;
+        var pY = _player.Location.Y;
+
+        var nX = npc.Location.X;
+        var nY = npc.Location.Y;
+        
+        short projectileGraphicsId = 18;
+        byte yOffset = (byte)((pY - nY) * -1);
+        byte xOffset = (byte)((pX - nX) * -1);
+
+        PacketBuilder.SpawnProjectilePacket(_player, 50, xOffset, yOffset, npcIndex, projectileGraphicsId, 60,
+            31, 0, 15, 35, 64);
+    }
+
     private void NPCCommand()
     {
         if (_commandArgs.Length > 2 || !int.TryParse(_commandArgs[1], out int npcModelId))

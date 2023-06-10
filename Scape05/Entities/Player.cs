@@ -66,7 +66,7 @@ public class Player : Client, IEntity
         var HighwayMan = new Location(3010, 3278);
         
         
-        Location = HillGiants;
+        Location = Goblins;
         BuildArea = new BuildArea(this);
 
         InitializePlayerColors();

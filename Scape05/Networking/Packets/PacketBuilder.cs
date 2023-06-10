@@ -10,6 +10,18 @@ public static class PacketBuilder
         SpawnGroundItemPacketCommand packetCommand = SpawnGroundItemPacketCommand.Create(itemId, amount, location);
         packetCommand.Execute(player);
     }
+    
+    public static void SpawnProjectilePacket(Player player, byte projectileAngle, byte projectileOffsetX, byte projectileOffsetY,
+        short projectileTarget, short projectileGraphicId, byte projectileHeightStart, byte projectileHeightEnd,
+        short projectileCreatedTime, short projectileSpeed, byte projectileInitialSlope,
+        byte projectileDistanceFromSource)
+    {
+        SpawnProjectilePacketCommand packetCommand = SpawnProjectilePacketCommand.Create(player, projectileAngle, projectileOffsetX, projectileOffsetY, projectileTarget,
+            projectileGraphicId, projectileHeightStart, projectileHeightEnd, projectileCreatedTime, projectileSpeed,
+            projectileInitialSlope, projectileDistanceFromSource);
+        
+        packetCommand.Execute(player);
+    }
 
     public static void SendMapRegion(Player player)
     {
