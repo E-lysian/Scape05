@@ -1,6 +1,8 @@
 ﻿using Scape05.Data.Npc;
+using Scape05.Engine.Combat;
 using Scape05.Entities;
 using Scape05.Entities.Packets;
+using Scape05.Handlers;
 using Scape05.Misc;
 using Scape05.World;
 
@@ -156,21 +158,33 @@ public class PlayerCommandPacket : IPacket
 
     private void SpawnProjectile()
     {
-        short npcIndex = 2017;
-        var npc = Server.NPCs[npcIndex];
+        short npcIndex = 2013;
+        if (npcIndex <= 0)
+        {
+            npcIndex = 1;
+        }
+
+        var npc = Server.NPCs[npcIndex - 1];
 
         var pX = _player.Location.X;
         var pY = _player.Location.Y;
 
         var nX = npc.Location.X;
         var nY = npc.Location.Y;
-        
+
         short projectileGraphicsId = 18;
         byte yOffset = (byte)((pY - nY) * -1);
         byte xOffset = (byte)((pX - nX) * -1);
 
-        PacketBuilder.SpawnProjectilePacket(_player, 50, xOffset, yOffset, npcIndex, projectileGraphicsId, 60,
-            31, 0, 15, 35, 64);
+        PacketBuilder.SpawnProjectilePacket(_player, 50, xOffset, yOffset, npcIndex, projectileGraphicsId, 43,
+            1, 0, 15, 35, 64);
+
+        npc.DelayedTaskHandler.RegisterDelayedTask(new DelayedHitSplatTask(npc, new DamageInfo
+        {
+            Amount = 1,
+            Type = DamageType.Damage,
+            DamageSource = _player
+        }));
     }
 
     private void NPCCommand()
