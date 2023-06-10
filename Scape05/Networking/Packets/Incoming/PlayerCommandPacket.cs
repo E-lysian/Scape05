@@ -1,10 +1,12 @@
-﻿using Scape05.Data.Npc;
+﻿using ICSharpCode.SharpZipLib.Core;
+using Scape05.Data.Npc;
 using Scape05.Engine.Combat;
 using Scape05.Entities;
 using Scape05.Entities.Packets;
 using Scape05.Handlers;
 using Scape05.Misc;
 using Scape05.World;
+using Scape05.World.Clipping;
 
 namespace Scape05.Networking.Packets.Incoming;
 
@@ -165,6 +167,13 @@ public class PlayerCommandPacket : IPacket
         }
 
         var npc = Server.NPCs[npcIndex - 1];
+        var isProjectilePathClear =
+            PathFinder.isProjectilePathClear(_player.Location.X, _player.Location.Y, 0, npc.Location.X, npc.Location.Y);
+        if (!isProjectilePathClear)
+        {
+            PacketBuilder.SendMessage("Can't range from here.", _player);
+            return;
+        }
 
         var pX = _player.Location.X;
         var pY = _player.Location.Y;
@@ -178,6 +187,7 @@ public class PlayerCommandPacket : IPacket
 
         PacketBuilder.SpawnProjectilePacket(_player, 50, xOffset, yOffset, npcIndex, projectileGraphicsId, 43,
             1, 0, 15, 35, 64);
+
 
         npc.DelayedTaskHandler.RegisterDelayedTask(new DelayedHitSplatTask(npc, new DamageInfo
         {
