@@ -1,28 +1,19 @@
 ﻿using Scape05.Entities;
+using Scape05.Entities.Packets;
 using Scape05.Handlers;
 using Scape05.Misc;
-using Scape05.World;
+using Scape05.World.Clipping;
 
 namespace Scape05.Engine.Combat;
 
-public class MeleeCombat : ICombatMethod
+public class RangeCombat : ICombatMethod
 {
-    private readonly IEntity _owner;
-    public bool HasPerformedDamage { get; set; }
-    public bool HasTakenDamage { get; set; }
-    public int CombatTick { get; set; }
-    public DamageInfo DamageTaken { get; set; }
-    public bool SkipTick { get; set; }
 
-    public bool CanCombat { get; set; } = true;
-
-
-    public MeleeCombat(IEntity owner)
+    public RangeCombat(IEntity owner)
     {
         _owner = owner;
     }
-
-    /* Comabt Tick */
+    
     public void Attack()
     {
         if (_owner.Weapon.Speed == 0 || _owner.Weapon == null || !CanCombat)
@@ -34,17 +25,24 @@ public class MeleeCombat : ICombatMethod
 
         if (_owner.CombatTarget != null && _owner.CombatMethod.CanCombat)
         {
-       
-            
+            /* Check if we can range from here, if so stop movement */
+            Console.WriteLine("Trying to attack..");
             
             var withinRange = WithinRange();
-            Console.WriteLine(
-                $"[{_owner.Name}] Within Range: {withinRange} of {_owner.CombatTarget} Size: {_owner.CombatTarget.Size}");
             if (!withinRange)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Can't reach..");
+                Console.ForegroundColor = ConsoleColor.White;
                 return;
             }
-
+            
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Can reach!");
+            Console.ForegroundColor = ConsoleColor.White;
+            var player = (Player)_owner;
+            player.MovementHandler.Reset();
+            
             _owner.InCombat = true;
             if (SkipTick)
             {
@@ -54,16 +52,36 @@ public class MeleeCombat : ICombatMethod
 
             if (CombatTick % _owner.Weapon.Speed == 0)
             {
+                
                 if (_owner.CombatTarget != null)
                 {
-                    _owner.CombatTarget.CombatMethod.TakeDamage(new DamageInfo
+                    short npcIndex = (short)(_owner.CombatTarget.Index);
+                    if (npcIndex <= 0)
                     {
-                        DamageSource = _owner,
-                        Amount = 5,
-                        Type = DamageType.Damage
-                    });
+                        npcIndex = 1;
+                    }
 
-                    HasPerformedDamage = true;
+                    var npc = Server.NPCs[npcIndex];
+                    
+                    var pX = _owner.Location.X + _owner.Size / 2;
+                    var pY = _owner.Location.Y + _owner.Size / 2;
+                    
+                    var nX = npc.Location.X + npc.Size / 2;
+                    var nY = npc.Location.Y + npc.Size / 2;
+                    short projectileGraphicsId = 18;
+                    byte yOffset = (byte)(nY - pY);
+                    byte xOffset = (byte)(nX - pX);
+                    _owner.PerformAnimation(426);
+                    _owner.DelayedTaskHandler.RegisterDelayedTask(new DelayedProjectileTask(() =>
+                        PacketBuilder.SpawnProjectilePacket((Player)_owner, 50, xOffset, yOffset, (short)(npcIndex + 1), projectileGraphicsId, 43,
+                            15, 15, 28, 20, 64)));
+                    
+                    npc.DelayedTaskHandler.RegisterDelayedTask(new DelayedHitSplatTask(npc, new DamageInfo
+                    {
+                        Amount = 1,
+                        Type = DamageType.Damage,
+                        DamageSource = _owner
+                    }));
 
                     Console.WriteLine($"+ [{_owner.Name}] Attacked: [{_owner.CombatTarget.Name}]");
                 }
@@ -81,13 +99,16 @@ public class MeleeCombat : ICombatMethod
 
     private bool WithinRange()
     {
-        var horizontally = _owner.Location.X >= _owner.CombatTarget.Location.X - _owner.Size &&
-                           _owner.Location.X <= _owner.CombatTarget.Location.X + _owner.CombatTarget.Size;
-        var vertically = _owner.Location.Y >= _owner.CombatTarget.Location.Y - _owner.Size &&
-                         _owner.Location.Y <= _owner.CombatTarget.Location.Y + _owner.CombatTarget.Size;
+        // var horizontally = _owner.Location.X >= _owner.CombatTarget.Location.X - _owner.Size &&
+        //                    _owner.Location.X <= _owner.CombatTarget.Location.X + _owner.CombatTarget.Size;
+        // var vertically = _owner.Location.Y >= _owner.CombatTarget.Location.Y - _owner.Size &&
+        //                  _owner.Location.Y <= _owner.CombatTarget.Location.Y + _owner.CombatTarget.Size;
+        //
+        // var withinRange = horizontally && vertically;
+        // return withinRange;
 
-        var withinRange = horizontally && vertically;
-        return withinRange;
+        return PathFinder.isProjectilePathClear(_owner.Location.X, _owner.Location.Y, 0, _owner.CombatTarget.Location.X,
+            _owner.CombatTarget.Location.Y);
     }
 
 
@@ -99,22 +120,23 @@ public class MeleeCombat : ICombatMethod
         {
             _owner.CombatTarget = info.DamageSource;
             SkipTick = true;
+            
         }
-
+        
         if (_owner is NPC)
         {
             var npc = (NPC)_owner;
             npc.Follow = _owner.CombatTarget;
-
+                
             npc.Flags |= NPCUpdateFlags.InteractingEntity;
             npc.InteractingEntityId = npc.Follow.Index + 32768;
         }
-
+        
         if (_owner is Player)
         {
             var player = (Player)_owner;
             player.Follow = _owner.CombatTarget;
-
+                
             player.Flags |= PlayerUpdateFlags.InteractingEntity;
             player.InteractingEntityId = _owner.CombatTarget.Index;
         }
@@ -139,7 +161,7 @@ public class MeleeCombat : ICombatMethod
 
             _owner.CombatMethod.CanCombat = false;
             _owner.CombatTarget.CombatMethod.CanCombat = false;
-
+            
             HasPerformedDamage = false;
             HasTakenDamage = false;
 
@@ -155,7 +177,6 @@ public class MeleeCombat : ICombatMethod
             _owner.PerformAnimation(_owner.Weapon.Animation.FallAnim);
             return;
         }
-
         if (HasPerformedDamage)
         {
             /* Set Attack Animation */
@@ -170,4 +191,12 @@ public class MeleeCombat : ICombatMethod
         HasPerformedDamage = false;
         HasTakenDamage = false;
     }
+
+    private readonly IEntity _owner;
+    public bool HasPerformedDamage { get; set; }
+    public bool HasTakenDamage { get; set; }
+    public int CombatTick { get; set; }
+    public DamageInfo DamageTaken { get; set; }
+    public bool SkipTick { get; set; }
+    public bool CanCombat { get; set; } = true;
 }

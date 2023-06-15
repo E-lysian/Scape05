@@ -46,7 +46,7 @@ public class Player : Client, IEntity
         PlayerUpdater = new PlayerUpdater(this);
         MovementHandler = new MovementHandler(this);
         PacketHandler = new PacketHandler(this);
-        CombatMethod = new MeleeCombat(this);
+        CombatMethod = new RangeCombat(this);
         Weapon = new(4151, 4, new CombatAnimations(1658, 1659, 1111, 836), 1);
         
         var Lumbridge = new Location(3200, 3200);
@@ -141,9 +141,9 @@ public class Player : Client, IEntity
         EquipmentManager.EquipItem(EquipmentSlot.Helmet, 3751);
         EquipmentManager.EquipItem(EquipmentSlot.Amulet, 1704);
         EquipmentManager.EquipItem(EquipmentSlot.Cape, 6570); //6570 fcape
-        EquipmentManager.EquipItem(EquipmentSlot.Weapon, 4151);
+        EquipmentManager.EquipItem(EquipmentSlot.Weapon, 861); //4151 whip
         EquipmentManager.EquipItem(EquipmentSlot.Body, 4736);
-        EquipmentManager.EquipItem(EquipmentSlot.Shield, 1187);
+        EquipmentManager.EquipItem(EquipmentSlot.Shield, 0x0000FF); //1187 dsquare
         EquipmentManager.EquipItem(EquipmentSlot.Gloves, 1580);
         EquipmentManager.EquipItem(EquipmentSlot.Legs, 4087);
         EquipmentManager.EquipItem(EquipmentSlot.Boots, 3105);

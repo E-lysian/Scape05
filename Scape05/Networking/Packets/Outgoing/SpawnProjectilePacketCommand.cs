@@ -39,6 +39,8 @@ public class SpawnProjectilePacketCommand : IPacketCommand
 
     public void Execute(Player player)
     {
+        
+       
         var npc = Server.NPCs[2017];
         player.Writer.CreateFrame(ServerOpCodes.PLAYER_LOCATION);
         player.Writer.WriteByteC((player.Location.Y - (player.BuildArea.OffsetChunkY * 8)) - 2);

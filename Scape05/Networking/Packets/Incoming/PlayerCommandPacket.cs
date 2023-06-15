@@ -171,22 +171,25 @@ public class PlayerCommandPacket : IPacket
             PathFinder.isProjectilePathClear(_player.Location.X, _player.Location.Y, 0, npc.Location.X, npc.Location.Y);
         if (!isProjectilePathClear)
         {
+            /* Try to walk to NPC until we reach a tile that we can range from */
             PacketBuilder.SendMessage("Can't range from here.", _player);
             return;
         }
 
-        var pX = _player.Location.X;
-        var pY = _player.Location.Y;
+        var pX = _player.Location.X + _player.Size / 2;
+        var pY = _player.Location.Y + _player.Size / 2;
 
-        var nX = npc.Location.X;
-        var nY = npc.Location.Y;
+        var nX = npc.Location.X + npc.Size / 2;
+        var nY = npc.Location.Y + npc.Size / 2;
 
         short projectileGraphicsId = 18;
-        byte yOffset = (byte)((pY - nY) * -1);
-        byte xOffset = (byte)((pX - nX) * -1);
+        byte yOffset = (byte)(pY - nY);
+        byte xOffset = (byte)(pX - nX);
 
-        PacketBuilder.SpawnProjectilePacket(_player, 50, xOffset, yOffset, npcIndex, projectileGraphicsId, 43,
-            1, 0, 15, 35, 64);
+        _player.PerformAnimation(426);
+        _player.DelayedTaskHandler.RegisterDelayedTask(new DelayedProjectileTask(() =>
+            PacketBuilder.SpawnProjectilePacket(_player, 50, xOffset, yOffset, npcIndex, projectileGraphicsId, 43,
+                15, 15, 28, 20, 64)));
 
 
         npc.DelayedTaskHandler.RegisterDelayedTask(new DelayedHitSplatTask(npc, new DamageInfo

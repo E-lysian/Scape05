@@ -1,4 +1,5 @@
-﻿using Scape05.Misc;
+﻿using Scape05.Engine.Combat;
+using Scape05.Misc;
 using Scape05.World;
 using Scape05.World.Clipping;
 
@@ -44,6 +45,14 @@ public class AttackNPCPacket : IPacket
         if (npc.CombatTarget == null)
         {
             player.CombatTarget = npc;
+        }
+
+        if (_attacker.CombatMethod is RangeCombat)
+        {
+            var pathClear = PathFinder.isProjectilePathClear(_attacker.Location.X, _attacker.Location.Y, 0,
+                npc.Location.X,
+                npc.Location.Y);
+            if (pathClear) return;
         }
 
         player.MovementHandler.Reset();
