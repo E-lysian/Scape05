@@ -27,5 +27,6 @@ public interface IEntity
     void PerformBlockAnimation();
     void DisplayHitSplat();
     public bool InCombat { get; set; }
+    public Queue<DamageInfo> HitQueue { get; set; }
 
 }

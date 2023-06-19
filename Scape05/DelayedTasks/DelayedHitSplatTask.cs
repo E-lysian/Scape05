@@ -8,13 +8,11 @@ public class DelayedHitSplatTask : IDelayedTask
     public int Delay { get; set; } = 1;
     public Action DelayedTask { get; set; }
 
-    public DelayedHitSplatTask(NPC npc, DamageInfo info)
+    public DelayedHitSplatTask(NPC npc, Action damageInvoke)
     {
         DelayedTask = () =>
         {
-            npc.CombatMethod.DamageTaken = info;
-            npc.DisplayHitSplat();
-            npc.PerformBlockAnimation();
+            damageInvoke.Invoke();
         };
     }
     

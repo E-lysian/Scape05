@@ -8,93 +8,168 @@ namespace Scape05.Engine.Combat;
 
 public class RangeCombat : ICombatMethod
 {
-
     public RangeCombat(IEntity owner)
     {
         _owner = owner;
     }
-    
+
     public void Attack()
     {
-        if (_owner.Weapon.Speed == 0 || _owner.Weapon == null || !CanCombat)
-            return;
+        if (_owner.CombatTarget == null) return;
 
-        /* Extra check to see if player is in combat? */
-
-        /* If inside the target, step away */
-
-        if (_owner.CombatTarget != null && _owner.CombatMethod.CanCombat)
+        /* Check distance delta validity */
+        var withinRange = WithinRange();
+        if (!withinRange)
         {
-            /* Check if we can range from here, if so stop movement */
-            Console.WriteLine("Trying to attack..");
-            
-            var withinRange = WithinRange();
-            if (!withinRange)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Can't reach..");
-                Console.ForegroundColor = ConsoleColor.White;
-                return;
-            }
-            
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Can reach!");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Can't reach..");
             Console.ForegroundColor = ConsoleColor.White;
-            var player = (Player)_owner;
-            player.MovementHandler.Reset();
-            
-            _owner.InCombat = true;
-            if (SkipTick)
-            {
-                SkipTick = false;
-                return;
-            }
+            return;
+        }
 
-            if (CombatTick % _owner.Weapon.Speed == 0)
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("Can reach!");
+        Console.ForegroundColor = ConsoleColor.White;
+        var player = (Player)_owner;
+        player.MovementHandler.Reset();
+
+        if (CombatTick % _owner.Weapon.Speed == 0)
+        {
+            var target = _owner.CombatTarget;
+            if (target != null)
             {
-                
-                if (_owner.CombatTarget != null)
+                _owner.HitQueue.TryDequeue(out var hit);
+                if (hit == null)
                 {
-                    short npcIndex = (short)(_owner.CombatTarget.Index);
-                    if (npcIndex <= 0)
+                    hit = new DamageInfo
                     {
-                        npcIndex = 1;
-                    }
-
-                    var npc = Server.NPCs[npcIndex];
-                    
-                    var pX = _owner.Location.X + _owner.Size / 2;
-                    var pY = _owner.Location.Y + _owner.Size / 2;
-                    
-                    var nX = npc.Location.X + npc.Size / 2;
-                    var nY = npc.Location.Y + npc.Size / 2;
-                    short projectileGraphicsId = 18;
-                    byte yOffset = (byte)(nY - pY);
-                    byte xOffset = (byte)(nX - pX);
-                    _owner.PerformAnimation(426);
-                    _owner.DelayedTaskHandler.RegisterDelayedTask(new DelayedProjectileTask(() =>
-                        PacketBuilder.SpawnProjectilePacket((Player)_owner, 50, xOffset, yOffset, (short)(npcIndex + 1), projectileGraphicsId, 43,
-                            15, 15, 28, 20, 64)));
-                    
-                    npc.DelayedTaskHandler.RegisterDelayedTask(new DelayedHitSplatTask(npc, new DamageInfo
-                    {
-                        Amount = 1,
-                        Type = DamageType.Damage,
-                        DamageSource = _owner
-                    }));
-
-                    Console.WriteLine($"+ [{_owner.Name}] Attacked: [{_owner.CombatTarget.Name}]");
+                        DamageSource = _owner,
+                        Type = DamageType.Block,
+                        Amount = 0
+                    };
                 }
 
-                CombatTick = 0;
+                short npcIndex = (short)(target.Index);
+                if (npcIndex <= 0)
+                {
+                    npcIndex = 1;
+                }
+
+                var npc = Server.NPCs[npcIndex];
+                var pX = _owner.Location.X + _owner.Size / 2;
+                var pY = _owner.Location.Y + _owner.Size / 2;
+                var nX = npc.Location.X + npc.Size / 2;
+                var nY = npc.Location.Y + npc.Size / 2;
+                short projectileGraphicsId = 18;
+                byte yOffset = (byte)(nY - pY);
+                byte xOffset = (byte)(nX - pX);
+                // _owner.PerformAnimation(426);
+                
+                _owner.DelayedTaskHandler.RegisterDelayedTask(new DelayedProjectileTask(() =>
+                    PacketBuilder.SpawnProjectilePacket((Player)_owner, 50, xOffset, yOffset, (short)(npcIndex + 1),
+                        projectileGraphicsId, 43,
+                        15, 15, 28, 20, 64)));
+
+                npc.DelayedTaskHandler.RegisterDelayedTask(new DelayedHitSplatTask(npc,
+                    () => { target.CombatMethod.TakeDamage(hit); }));
+                HasPerformedDamage = true;
+                Console.WriteLine($"+ [{_owner.Name}] Attacked: [{target.Name}]");
             }
 
-            if (CanCombat)
-            {
-                Console.WriteLine($"[{_owner.Name}]: CanCombat!");
-                CombatTick++;
-            }
+            CombatTick = 0;
         }
+
+        CombatTick++;
+
+        // if (_owner.Weapon.Speed == 0 || _owner.Weapon == null || !CanCombat)
+        //     return;
+        //
+        // /* Extra check to see if player is in combat? */
+        //
+        // /* If inside the target, step away */
+        //
+        // if (_owner.CombatTarget != null && _owner.CombatMethod.CanCombat)
+        // {
+        //     /* Check if we can range from here, if so stop movement */
+        //     Console.WriteLine("Trying to attack..");
+        //
+        //     var withinRange = WithinRange();
+        //     if (!withinRange)
+        //     {
+        //         Console.ForegroundColor = ConsoleColor.Red;
+        //         Console.WriteLine("Can't reach..");
+        //         Console.ForegroundColor = ConsoleColor.White;
+        //         return;
+        //     }
+        //
+        //     Console.ForegroundColor = ConsoleColor.Green;
+        //     Console.WriteLine("Can reach!");
+        //     Console.ForegroundColor = ConsoleColor.White;
+        //     var player = (Player)_owner;
+        //     player.MovementHandler.Reset();
+        //
+        //     _owner.InCombat = true;
+        //     if (SkipTick)
+        //     {
+        //         SkipTick = false;
+        //         return;
+        //     }
+        //
+        //     if (CombatTick % _owner.Weapon.Speed == 0)
+        //     {
+        //         if (_owner.CombatTarget != null)
+        //         {
+        //             short npcIndex = (short)(_owner.CombatTarget.Index);
+        //             if (npcIndex <= 0)
+        //             {
+        //                 npcIndex = 1;
+        //             }
+        //
+        //             var npc = Server.NPCs[npcIndex];
+        //
+        //             var pX = _owner.Location.X + _owner.Size / 2;
+        //             var pY = _owner.Location.Y + _owner.Size / 2;
+        //
+        //             var nX = npc.Location.X + npc.Size / 2;
+        //             var nY = npc.Location.Y + npc.Size / 2;
+        //             short projectileGraphicsId = 18;
+        //             byte yOffset = (byte)(nY - pY);
+        //             byte xOffset = (byte)(nX - pX);
+        //             _owner.PerformAnimation(426);
+        //             _owner.DelayedTaskHandler.RegisterDelayedTask(new DelayedProjectileTask(() =>
+        //                 PacketBuilder.SpawnProjectilePacket((Player)_owner, 50, xOffset, yOffset, (short)(npcIndex + 1),
+        //                     projectileGraphicsId, 43,
+        //                     15, 15, 28, 20, 64)));
+        //
+        //             npc.DelayedTaskHandler.RegisterDelayedTask(new DelayedHitSplatTask(npc, () =>
+        //             {
+        //                 _owner.CombatTarget.CombatMethod.TakeDamage(new DamageInfo
+        //                 {
+        //                     DamageSource = _owner,
+        //                     Amount = 0,
+        //                     Type = DamageType.Damage
+        //                 });
+        //             }));
+        //
+        //             // _owner.CombatTarget.CombatMethod.TakeDamage(new DamageInfo
+        //             // {
+        //             //     DamageSource = _owner,
+        //             //     Amount = 0,
+        //             //     Type = DamageType.Damage
+        //             // });
+        //
+        //             Console.WriteLine($"+ [{_owner.Name}] Attacked: [{_owner.CombatTarget.Name}]");
+        //         }
+        //
+        //         CombatTick = 0;
+        //     }
+        //
+        //     if (CanCombat)
+        //     {
+        //         Console.WriteLine($"[{_owner.Name}]: CanCombat!");
+        //         CombatTick++;
+        //     }
+        // }
     }
 
     private bool WithinRange()
@@ -120,23 +195,22 @@ public class RangeCombat : ICombatMethod
         {
             _owner.CombatTarget = info.DamageSource;
             SkipTick = true;
-            
         }
-        
+
         if (_owner is NPC)
         {
             var npc = (NPC)_owner;
             npc.Follow = _owner.CombatTarget;
-                
+
             npc.Flags |= NPCUpdateFlags.InteractingEntity;
             npc.InteractingEntityId = npc.Follow.Index + 32768;
         }
-        
+
         if (_owner is Player)
         {
             var player = (Player)_owner;
             player.Follow = _owner.CombatTarget;
-                
+
             player.Flags |= PlayerUpdateFlags.InteractingEntity;
             player.InteractingEntityId = _owner.CombatTarget.Index;
         }
@@ -161,7 +235,7 @@ public class RangeCombat : ICombatMethod
 
             _owner.CombatMethod.CanCombat = false;
             _owner.CombatTarget.CombatMethod.CanCombat = false;
-            
+
             HasPerformedDamage = false;
             HasTakenDamage = false;
 
@@ -177,6 +251,20 @@ public class RangeCombat : ICombatMethod
             _owner.PerformAnimation(_owner.Weapon.Animation.FallAnim);
             return;
         }
+
+        switch (_owner)
+        {
+            case Player player:
+                if (player.MovementHandler.PrimaryDirection != -1)
+                    return;
+                break;
+            case NPC npc:
+                if (npc.MovementHandler.PrimaryDirection != -1)
+                    return;
+                break;
+        }
+
+
         if (HasPerformedDamage)
         {
             /* Set Attack Animation */

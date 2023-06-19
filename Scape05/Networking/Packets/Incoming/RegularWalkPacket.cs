@@ -9,12 +9,11 @@ public class RegularWalkPacket : IPacket
 
     public void Build(Player player)
     {
-        
-        player.CombatTarget = null;
         player.Flags |= PlayerUpdateFlags.InteractingEntity;
         player.InteractingEntityId = 0x00FFFF;
+        // player.InteractingEntityId = -1;
         player.IsUpdateRequired = true;
-        player.InteractingEntityId = -1;
+        player.CombatTarget = null;
         
         var _destX = -1;
         var _destY = -1;

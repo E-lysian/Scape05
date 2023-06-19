@@ -22,7 +22,8 @@ public class NPC : IEntity
     public int MaxHealth { get; set; } = 25;
     public int AnimationId { get; set; } = -1;
     public bool InCombat { get; set; }
-    
+    public Queue<DamageInfo> HitQueue { get; set; } = new();
+
     public void DisplayHitSplat()
     {
         Flags |= NPCUpdateFlags.SingleHit;
@@ -40,15 +41,15 @@ public class NPC : IEntity
     }
 
     public DelayedTaskHandler DelayedTaskHandler { get; set; } = new();
-    
+
     public NPCMovementHandler MovementHandler { get; set; }
     public bool CanWalk { get; set; }
     public Face Face { get; set; }
-    
+
     public IEntity Follow { get; set; } = null;
     public ICombatMethod CombatMethod { get; set; }
     public IEntity CombatTarget { get; set; }
-    
+
     public int InteractingEntityId { get; set; } = 0x00FFFF;
     public bool Dead { get; set; }
 
@@ -70,7 +71,7 @@ public class NPC : IEntity
         Flags |= NPCUpdateFlags.Animation;
         IsUpdateRequired = true;
     }
-    
+
     public void Reset()
     {
         NeedsPlacement = false;

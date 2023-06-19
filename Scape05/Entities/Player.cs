@@ -24,7 +24,8 @@ public class Player : Client, IEntity
     public ICombatMethod CombatMethod { get; set; }
     public IEntity CombatTarget { get; set; }
     public bool InCombat { get; set; }
-    
+    public Queue<DamageInfo> HitQueue { get; set; } = new();
+
     public Weapon Weapon { get; set; }
     public int TotalLevel { get; set; }
     public bool IsUpdateRequired { get; set; }
@@ -47,7 +48,7 @@ public class Player : Client, IEntity
         MovementHandler = new MovementHandler(this);
         PacketHandler = new PacketHandler(this);
         CombatMethod = new RangeCombat(this);
-        Weapon = new(4151, 4, new CombatAnimations(1658, 1659, 1111, 836), 1);
+        Weapon = new(4151, 4, new CombatAnimations(426, 1659, 1111, 836), 1);
         
         var Lumbridge = new Location(3200, 3200);
         var Goblins = new Location(3253, 3235);

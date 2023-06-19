@@ -192,11 +192,14 @@ public class PlayerCommandPacket : IPacket
                 15, 15, 28, 20, 64)));
 
 
-        npc.DelayedTaskHandler.RegisterDelayedTask(new DelayedHitSplatTask(npc, new DamageInfo
+        npc.DelayedTaskHandler.RegisterDelayedTask(new DelayedHitSplatTask(npc, () =>
         {
-            Amount = 1,
-            Type = DamageType.Damage,
-            DamageSource = _player
+            new DamageInfo
+            {
+                Amount = 1,
+                Type = DamageType.Damage,
+                DamageSource = _player
+            };
         }));
     }
 

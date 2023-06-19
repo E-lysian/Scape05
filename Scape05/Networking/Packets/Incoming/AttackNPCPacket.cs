@@ -1,6 +1,5 @@
 ﻿using Scape05.Engine.Combat;
 using Scape05.Misc;
-using Scape05.World;
 using Scape05.World.Clipping;
 
 namespace Scape05.Entities.Packets.Implementation;
@@ -19,32 +18,46 @@ public class AttackNPCPacket : IPacket
 
         var npc = Server.NPCs[index];
         _target = npc;
-
+        
+        _attacker.CombatTarget = npc;
+        _attacker.Flags |= PlayerUpdateFlags.InteractingEntity;
+        _attacker.InteractingEntityId = _target.Index;
+        _attacker.IsUpdateRequired = true;
         Console.WriteLine($"NPC index: {npc.Index}");
         Console.WriteLine($"NPC Name: {npc.Name}");
         Console.WriteLine($"NPC CombatLevel: {npc.CombatLevel}");
         Console.WriteLine($"AttackNPCX: {npc.Location.X} - AttackNPCY: {npc.Location.Y}");
         Console.WriteLine($"Built {nameof(AttackNPCPacket)}");
 
-        player.Flags |= PlayerUpdateFlags.InteractingEntity;
-        player.InteractingEntityId = _target.Index;
-        player.IsUpdateRequired = true;
+        // player.Flags |= PlayerUpdateFlags.InteractingEntity;
+        // player.InteractingEntityId = _target.Index;
+        // player.IsUpdateRequired = true;
+        //
+        // if (_attacker.InCombat)
+        // {
+        //     PacketBuilder.SendMessage("You're already in combat.", _attacker);
+        //     return;
+        // }
+        //
+        // if (npc.CombatTarget != null && npc.CombatTarget != _attacker)
+        // {
+        //     PacketBuilder.SendMessage("They are already in combat.", _attacker);
+        //     return;
+        // }
+        //
+        // if (npc.CombatTarget == null)
+        // {
+        //     player.CombatTarget = npc;
+        // }
 
-        if (_attacker.InCombat)
+        if (_attacker.HitQueue.Count <= 0)
         {
-            PacketBuilder.SendMessage("You're already in combat.", _attacker);
-            return;
-        }
-
-        if (npc.CombatTarget != null && npc.CombatTarget != _attacker)
-        {
-            PacketBuilder.SendMessage("They are already in combat.", _attacker);
-            return;
-        }
-
-        if (npc.CombatTarget == null)
-        {
-            player.CombatTarget = npc;
+            _attacker.HitQueue.Enqueue(new DamageInfo
+            {
+                DamageSource = _attacker,
+                Type = DamageType.Block,
+                Amount = 0
+            });
         }
 
         if (_attacker.CombatMethod is RangeCombat)

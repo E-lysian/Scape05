@@ -156,6 +156,18 @@ public class MeleeCombat : ICombatMethod
             return;
         }
 
+        switch (_owner)
+        {
+            case Player player:
+                if (player.MovementHandler.PrimaryDirection != -1)
+                    return;
+                break;
+            case NPC npc:
+                if (npc.MovementHandler.PrimaryDirection != -1)
+                    return;
+                break;
+        }
+        
         if (HasPerformedDamage)
         {
             /* Set Attack Animation */
