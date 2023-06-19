@@ -11,7 +11,7 @@ public class RegularWalkPacket : IPacket
     {
         player.Flags |= PlayerUpdateFlags.InteractingEntity;
         player.InteractingEntityId = 0x00FFFF;
-        // player.InteractingEntityId = -1;
+        player.InteractingEntityId = -1;
         player.IsUpdateRequired = true;
         player.CombatTarget = null;
         
@@ -50,7 +50,6 @@ public class RegularWalkPacket : IPacket
         /* Used in order to interrupt any ongoing tasks */
 
         //client.IsUpdateRequired = true;
-
         var tiles = new List<Location>();
         if (path.Length > 0)
             tiles = PathFinder.getPathFinder().FindRoute(player, _destX, _destY, true, 1, 1);
